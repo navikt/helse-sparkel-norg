@@ -36,5 +36,9 @@ spec:
       - mountPath: /var/run/secrets/nais.io/service_user
         kvPath: /serviceuser/data/prod/srvsparkelnorg
   env:
-    - name: STS_BASE_URL
-      value: http://security-token-service.default.svc.nais.local
+    - name: NORG2_BASE_URL
+      value: https://app.adeo.no/norg2/ws/Arbeidsfordeling/v1
+    - name: PERSONV3_URL
+      value: https://wasapp.adeo.no/tpsws/ws/Person/v3
+    - name: SECURITY_TOKEN_SERVICE_URL
+      value: https://sts.adeo.no/SecurityTokenServiceProvider/
