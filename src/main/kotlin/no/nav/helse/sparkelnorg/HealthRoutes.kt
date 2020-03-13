@@ -16,7 +16,7 @@ fun Routing.registerHealthApi(
     readiness: () -> Boolean,
     meterRegistry: PrometheusMeterRegistry
 ) {
-    get("/is_alive") {
+    get("/isalive") {
         if (liveness()) {
             call.respondText("гудок")
         } else {
@@ -24,7 +24,7 @@ fun Routing.registerHealthApi(
         }
     }
 
-    get("/is_ready") {
+    get("/isready") {
         if (readiness()) {
             call.respondText("гудок")
         } else {
