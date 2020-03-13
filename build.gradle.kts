@@ -28,9 +28,17 @@ dependencies {
     implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-ws-security:$cxfVersion")
+    implementation("org.apache.cxf:cxf-rt-transports-http:$cxfVersion")
 
-    compile("io.prometheus:simpleclient_common:0.8.1")
-    compile("io.prometheus:simpleclient:0.8.1")
+    implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+    implementation("org.glassfish.jaxb:jaxb-runtime:2.4.0-b180830.0438")
+    implementation("com.sun.activation:javax.activation:1.2.0")
+    implementation("com.sun.xml.ws:jaxws-tools:2.3.1") {
+        exclude(group = "com.sun.xml.ws", module = "policy")
+    }
+
+    implementation("io.prometheus:simpleclient_common:0.8.1")
+    implementation("io.prometheus:simpleclient:0.8.1")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
@@ -45,9 +53,6 @@ dependencies {
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.mockk:mockk:1.9.3")
 }
-
-val githubUser: String by project
-val githubPassword: String by project
 
 repositories {
     mavenCentral()

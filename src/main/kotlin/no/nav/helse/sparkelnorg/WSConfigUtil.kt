@@ -22,7 +22,8 @@ class PortConfigurator<T> {
 
     fun T.withSTS(username: String, password: String, endpoint: String) = apply {
         val client = ClientProxy.getClient(this)
-        client.requestContext[SecurityConstants.STS_CLIENT] = createSystemUserSTSClient(client, username, password, endpoint, true)
+        client.requestContext[SecurityConstants.STS_CLIENT] =
+            createSystemUserSTSClient(client, username, password, endpoint, true)
     }
 }
 
@@ -43,7 +44,13 @@ inline fun <reified T> createPort(
 var STS_CLIENT_AUTHENTICATION_POLICY = "classpath:sts/policies/untPolicy.xml"
 var STS_REQUEST_SAML_POLICY = "classpath:sts/policies/requestSamlPolicy.xml"
 
-fun createSystemUserSTSClient(client: Client, username: String, password: String, loc: String, cacheTokenInEndpoint: Boolean): STSClient =
+fun createSystemUserSTSClient(
+    client: Client,
+    username: String,
+    password: String,
+    loc: String,
+    cacheTokenInEndpoint: Boolean
+): STSClient =
     STSClientWSTrust13And14(client.bus).apply {
         location = loc
         properties = mapOf(
@@ -57,7 +64,9 @@ fun createSystemUserSTSClient(client: Client, username: String, password: String
 
         requestContext[SecurityConstants.CACHE_ISSUED_TOKEN_IN_ENDPOINT] = cacheTokenInEndpoint
 
-        val policy = RemoteReferenceResolver("", client.bus.getExtension(PolicyBuilder::class.java)).resolveReference(STS_REQUEST_SAML_POLICY)
+        val policy = RemoteReferenceResolver("", client.bus.getExtension(PolicyBuilder::class.java)).resolveReference(
+            STS_REQUEST_SAML_POLICY
+        )
 
         val endpointInfo = client.endpoint.endpointInfo
         val policyEngine = client.bus.getExtension(PolicyEngine::class.java)
