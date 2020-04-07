@@ -17,7 +17,7 @@ class BehandlendeEnhetRiver(
     private val sikkerLogg: Logger = LoggerFactory.getLogger("tjenestekall")
     init {
         River(rapidsConnection).apply {
-            validate { it.requireAny("@behov", listOf("HentEnhet")) }
+            validate { it.requireAll("@behov", listOf("HentEnhet")) }
             validate { it.requireKey("fødselsnummer") }
         }.register(this)
     }
