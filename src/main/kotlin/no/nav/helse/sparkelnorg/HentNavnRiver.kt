@@ -7,7 +7,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
 @KtorExperimentalAPI
-class BehandlendeEnhetRiver(
+class HentNavnRiver(
     rapidsConnection: RapidsConnection,
     private val personinfoService: PersoninfoService
 ) : River.PacketListener {
@@ -19,9 +19,14 @@ class BehandlendeEnhetRiver(
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) = runBlocking {
-        val enhet = personinfoService.finnBehandlendeEnhet(packet["fødselsnummer"].asText())
+        val person = personinfoService.finnPerson(packet["fødselsnummer"].asText()) ?: return@runBlocking
+
         packet["@løsning"] = mapOf(
-            "HentEnhet" to enhet
+            "HentNavn" to mapOf(
+                "fornavn" to person.personnavn.fornavn,
+                "mellomnavn" to person.personnavn.mellomnavn,
+                "etternavn" to person.personnavn.etternavn
+            )
         )
         context.send(packet.toJson())
     }

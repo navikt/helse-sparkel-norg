@@ -7,9 +7,9 @@ import io.ktor.routing.get
 import io.ktor.util.KtorExperimentalAPI
 
 @KtorExperimentalAPI
-fun Routing.registerBehandlendeEnhetApi(behandlendeEnhetService: BehandlendeEnhetService){
+fun Routing.registerBehandlendeEnhetApi(personinfoService: PersoninfoService){
     get("/behandlendeEnhet") {
         val fødselsnummer = requireNotNull(call.request.headers["fødselsnummer"])
-        call.respond(behandlendeEnhetService.finnBehandlendeEnhet(fødselsnummer))
+        call.respond(personinfoService.finnBehandlendeEnhet(fødselsnummer))
     }
 }
