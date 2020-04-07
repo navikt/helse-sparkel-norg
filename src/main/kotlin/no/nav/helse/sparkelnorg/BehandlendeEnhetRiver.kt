@@ -15,7 +15,7 @@ class BehandlendeEnhetRiver(
         River(rapidsConnection).apply {
             validate { it.requireAny("@behov", listOf("HentEnhet")) }
             validate { it.requireKey("fødselsnummer") }
-        }
+        }.register(this)
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) = runBlocking {
