@@ -20,7 +20,10 @@ class HentNavnRiver(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.requireAll("@behov", listOf("HentEnhet")) }
+            validate {
+                it.requireAll("@behov", listOf("HentEnhet"))
+                it.forbid("@løsning")
+            }
             validate { it.requireKey("fødselsnummer", "spleisBehovId") }
         }.register(this)
     }

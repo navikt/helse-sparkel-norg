@@ -2,6 +2,7 @@ package no.nav.helse.sparkelnorg
 
 import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
+import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -14,11 +15,15 @@ class BehandlendeEnhetRiver(
     rapidsConnection: RapidsConnection,
     private val personinfoService: PersoninfoService
 ) : River.PacketListener {
+    private val log: Logger = LoggerFactory.getLogger("hent-navn")
     private val sikkerLogg: Logger = LoggerFactory.getLogger("tjenestekall")
     init {
         River(rapidsConnection).apply {
-            validate { it.requireAll("@behov", listOf("HentEnhet")) }
-            validate { it.requireKey("fødselsnummer") }
+            validate {
+                it.requireAll("@behov", listOf("HentEnhet"))
+                it.forbid("@løsning")
+            }
+            validate { it.requireKey("fødselsnummer", "spleisBehovId") }
         }.register(this)
     }
 
@@ -27,6 +32,7 @@ class BehandlendeEnhetRiver(
         packet["@løsning"] = mapOf(
             "HentEnhet" to enhet
         )
+        log.info("Henter behandlende enhet for {}", keyValue("spleisBehovId", packet["spleisBehovId"].asText()))
         context.send(packet.toJson())
     }
 
