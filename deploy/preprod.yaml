@@ -42,3 +42,5 @@ spec:
       value: https://wasapp-q1.adeo.no/tpsws/ws/Person/v3
     - name: SECURITY_TOKEN_SERVICE_URL
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
+    - name: KAFKA_RAPID_TOPIC
+      value: helse-rapid-v1
