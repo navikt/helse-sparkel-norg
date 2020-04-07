@@ -13,9 +13,6 @@ internal const val NAV_OPPFOLGING_UTLAND_KONTOR_NR = "0393"
 fun main() {
     val serviceUser = readServiceUserCredentials()
     val environment = readEnvironment()
-    RapidApplication.create(System.getenv()).apply {
-
-    }
     launchApplication(environment, serviceUser)
 }
 
@@ -44,7 +41,7 @@ fun launchApplication(
     RapidApplication.create(System.getenv()).apply {
         BehandlendeEnhetRiver(this, behandlendeEnhetService)
         HentNavnRiver(this, behandlendeEnhetService)
-    }
+    }.start()
 }
 
 private fun simpleHttpClient(serializer: JacksonSerializer? = JacksonSerializer()) = HttpClient {
