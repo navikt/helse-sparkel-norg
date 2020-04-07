@@ -40,6 +40,8 @@ dependencies {
     implementation("io.prometheus:simpleclient_common:0.8.1")
     implementation("io.prometheus:simpleclient:0.8.1")
 
+    implementation("com.github.navikt:rapids-and-rivers:1.1822995")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
@@ -56,6 +58,7 @@ dependencies {
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
     maven("http://packages.confluent.io/maven/")
 }
 

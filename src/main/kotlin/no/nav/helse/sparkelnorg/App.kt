@@ -17,6 +17,7 @@ import io.micrometer.core.instrument.Clock
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import io.prometheus.client.CollectorRegistry
+import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import java.util.concurrent.TimeUnit
 
@@ -31,6 +32,9 @@ internal const val NAV_OPPFOLGING_UTLAND_KONTOR_NR = "0393"
 fun main() {
     val serviceUser = readServiceUserCredentials()
     val environment = readEnvironment()
+    RapidApplication.create(System.getenv()).apply {
+
+    }
     launchApplication(environment, serviceUser)
 }
 
@@ -56,20 +60,9 @@ fun launchApplication(
 
     val behandlendeEnhetService = BehandlendeEnhetService(norgRestClient, personV3)
 
-    val server = embeddedServer(Netty, 8080) {
-        install(MicrometerMetrics) {
-            registry = prometheusMeterRegistry
-        }
-
-        routing {
-            registerHealthApi({ true }, { true }, prometheusMeterRegistry)
-            registerBehandlendeEnhetApi(behandlendeEnhetService)
-        }
-    }.start(wait = false)
-
-    Runtime.getRuntime().addShutdownHook(Thread {
-        server.stop(10, 10, TimeUnit.SECONDS)
-    })
+    RapidApplication.create(System.getenv()).apply {
+        BehandlendeEnhetRiver(this, behandlendeEnhetService)
+    }
 }
 
 private fun simpleHttpClient(serializer: JacksonSerializer? = JacksonSerializer()) = HttpClient() {
