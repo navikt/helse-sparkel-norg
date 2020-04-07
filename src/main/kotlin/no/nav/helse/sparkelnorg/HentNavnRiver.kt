@@ -21,7 +21,7 @@ class HentNavnRiver(
     init {
         River(rapidsConnection).apply {
             validate {
-                it.requireAll("@behov", listOf("HentEnhet"))
+                it.requireAll("@behov", listOf("HentPersoninfo"))
                 it.forbid("@løsning")
             }
             validate { it.requireKey("fødselsnummer", "spleisBehovId") }
@@ -34,7 +34,7 @@ class HentNavnRiver(
         val person = personinfoService.finnPerson(fnr) ?: return@runBlocking
 
         packet["@løsning"] = mapOf(
-            "HentNavn" to mapOf(
+            "HentPersoninfo" to mapOf(
                 "fornavn" to person.personnavn.fornavn,
                 "mellomnavn" to person.personnavn.mellomnavn,
                 "etternavn" to person.personnavn.etternavn
