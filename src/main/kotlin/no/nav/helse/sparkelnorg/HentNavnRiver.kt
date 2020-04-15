@@ -44,6 +44,6 @@ class HentNavnRiver(
     }
 
     override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
-        sikkerLogg.info(problems.toExtendedReport())
+        sikkerLogg.debug(problems.toExtendedReport())
     }
 }

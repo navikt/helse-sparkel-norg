@@ -16,9 +16,12 @@ group = "no.nav.helse"
 dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-server-host-common:$ktorVersion")
+    implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
+
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-server-host-common:$ktorVersion")
     implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
+
     implementation("io.micrometer:micrometer-registry-prometheus:1.1.4")
     implementation("no.nav.tjenestespesifikasjoner:person-v3-tjenestespesifikasjon:1.2019.09.25-00.21-49b69f0625e0")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
