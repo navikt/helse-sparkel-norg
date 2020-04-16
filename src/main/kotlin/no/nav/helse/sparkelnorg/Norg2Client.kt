@@ -11,12 +11,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.contentType
 import io.ktor.util.KtorExperimentalAPI
-import kotlinx.coroutines.delay
-import kotlinx.io.errors.IOException
-import net.logstash.logback.argument.StructuredArguments.keyValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.reflect.KClass
 
 @KtorExperimentalAPI
 class Norg2Client(

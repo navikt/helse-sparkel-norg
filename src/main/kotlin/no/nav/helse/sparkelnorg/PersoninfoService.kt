@@ -17,14 +17,15 @@ import java.io.IOException
 @KtorExperimentalAPI
 class PersoninfoService(private val norg2Client: Norg2Client, private val personV3: PersonV3) {
     suspend fun finnBehandlendeEnhet(fødselsnummer: String): String {
+        val diskresjonskode = requireNotNull(finnPerson(fødselsnummer))?.diskresjonskode?.value
         val geografiskTilknytning =
             requireNotNull(finnGeografiskTilknytning(fødselsnummer)?.geografiskTilknytning?.geografiskTilknytning)
-        return norg2Client.finnBehandlendeEnhet(geografiskTilknytning, null).enhetNr
+        return norg2Client.finnBehandlendeEnhet(geografiskTilknytning, diskresjonskode).enhetNr
     }
 
     internal suspend fun finnPerson(fødselsnummer: String): Person? = try {
         retry(
-            callName = "tps_hent_geografisktilknytning",
+            callName = "tps_hent_person",
             retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
             legalExceptions = *arrayOf(IOException::class, WstxException::class, IllegalStateException::class)
         ) {
@@ -38,7 +39,7 @@ class PersoninfoService(private val norg2Client: Norg2Client, private val person
                 )
             ).person
         }
-    } catch (hentGeografiskTilknytningPersonIkkeFunnet: HentPersonPersonIkkeFunnet) {
+    } catch (hentPersonPersonIkkeFunnet: HentPersonPersonIkkeFunnet) {
         null
     }
 
