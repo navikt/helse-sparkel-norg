@@ -37,7 +37,7 @@ spec:
         kvPath: /serviceuser/data/prod/srvsparkelnorg
   env:
     - name: NORG2_BASE_URL
-      value: https://app.adeo.no/norg2/ws/Arbeidsfordeling/v1
+      value: https://app.adeo.no/norg2/api/v1
     - name: PERSONV3_URL
       value: https://wasapp.adeo.no/tpsws/ws/Person/v3
     - name: SECURITY_TOKEN_SERVICE_URL
