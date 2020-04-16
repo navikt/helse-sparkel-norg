@@ -10,10 +10,10 @@ spec:
   port: 8080
   liveness:
     path: isalive
-    initialDelay: 5
+    initialDelay: 45
   readiness:
     path: isready
-    initialDelay: 5
+    initialDelay: 45
   resources:
     limits:
       cpu: 200m
@@ -42,3 +42,9 @@ spec:
       value: https://wasapp-q1.adeo.no/tpsws/ws/Person/v3
     - name: SECURITY_TOKEN_SERVICE_URL
       value: https://sts-q1.preprod.local/SecurityTokenServiceProvider/
+    - name: KAFKA_BOOTSTRAP_SERVERS
+      value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
+    - name: KAFKA_RAPID_TOPIC
+      value: helse-rapid-v1
+    - name: KAFKA_CONSUMER_GROUP_ID
+      value: sparkel-norg-v1

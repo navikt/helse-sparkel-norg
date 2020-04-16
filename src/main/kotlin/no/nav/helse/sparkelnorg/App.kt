@@ -1,31 +1,19 @@
 package no.nav.helse.sparkelnorg
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import io.ktor.application.install
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
-import io.ktor.metrics.micrometer.MicrometerMetrics
-import io.ktor.routing.routing
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.ktor.client.features.logging.LogLevel
+import io.ktor.client.features.logging.Logging
 import io.ktor.util.KtorExperimentalAPI
-import io.micrometer.core.instrument.Clock
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.prometheus.client.CollectorRegistry
+import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
-import java.util.concurrent.TimeUnit
-
-val prometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
-internal val objectMapper: ObjectMapper = jacksonObjectMapper()
-    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-    .registerModule(JavaTimeModule())
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 internal const val NAV_OPPFOLGING_UTLAND_KONTOR_NR = "0393"
+
+private val sikkerLogg: Logger = LoggerFactory.getLogger("tjenestekall")
 
 @KtorExperimentalAPI
 fun main() {
@@ -54,25 +42,23 @@ fun launchApplication(
         }
     }
 
-    val behandlendeEnhetService = BehandlendeEnhetService(norgRestClient, personV3)
+    val behandlendeEnhetService = PersoninfoService(norgRestClient, personV3)
 
-    val server = embeddedServer(Netty, 8080) {
-        install(MicrometerMetrics) {
-            registry = prometheusMeterRegistry
-        }
-
-        routing {
-            registerHealthApi({ true }, { true }, prometheusMeterRegistry)
-            registerBehandlendeEnhetApi(behandlendeEnhetService)
-        }
-    }.start(wait = false)
-
-    Runtime.getRuntime().addShutdownHook(Thread {
-        server.stop(10, 10, TimeUnit.SECONDS)
-    })
+    RapidApplication.create(System.getenv()).apply {
+        BehandlendeEnhetRiver(this, behandlendeEnhetService)
+        HentNavnRiver(this, behandlendeEnhetService)
+    }.start()
 }
 
-private fun simpleHttpClient(serializer: JacksonSerializer? = JacksonSerializer()) = HttpClient() {
+private fun simpleHttpClient(serializer: JacksonSerializer? = JacksonSerializer()) = HttpClient {
+    install(Logging) {
+        level = LogLevel.BODY
+        logger = object : io.ktor.client.features.logging.Logger {
+            override fun log(message: String) {
+                sikkerLogg.debug(message)
+            }
+        }
+    }
     install(JsonFeature) {
         this.serializer = serializer
     }

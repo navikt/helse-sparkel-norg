@@ -1,5 +1,6 @@
 package no.nav.helse.sparkelnorg
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.request.accept
@@ -42,6 +43,7 @@ class Norg2Client(
         }
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Enhet(
     val enhetNr: String
 )
