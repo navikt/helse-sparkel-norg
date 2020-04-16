@@ -17,6 +17,7 @@ class BehandlendeEnhetRiver(
 ) : River.PacketListener {
     private val log: Logger = LoggerFactory.getLogger("hent-navn")
     private val sikkerLogg: Logger = LoggerFactory.getLogger("tjenestekall")
+
     init {
         River(rapidsConnection).apply {
             validate {
@@ -32,7 +33,11 @@ class BehandlendeEnhetRiver(
         packet["@løsning"] = mapOf(
             "HentEnhet" to enhet
         )
-        log.info("Henter behandlende enhet for {}", keyValue("spleisBehovId", packet["spleisBehovId"].asText()))
+        log.info(
+            "Løser behov for behandlende enhet for {}, {}",
+            keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
+            keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText())
+        )
         context.send(packet.toJson())
     }
 
