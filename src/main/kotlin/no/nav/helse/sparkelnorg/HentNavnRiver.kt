@@ -30,7 +30,14 @@ class HentNavnRiver(
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) = runBlocking {
         val fnr = packet["fødselsnummer"].asText()
-        log.info("Henter personinfo for {}", keyValue("spleisBehovId", packet["spleisBehovId"].asText()))
+        log.info(
+            "Henter personinfo for {}, {}",
+            keyValue(
+                "spleisBehovId",
+                packet["spleisBehovId"].asText()
+            ),
+            keyValue("spleisBehovId", packet["spleisBehovId"].asText())
+        )
         val person = personinfoService.finnPerson(fnr) ?: return@runBlocking
 
         packet["@løsning"] = mapOf(

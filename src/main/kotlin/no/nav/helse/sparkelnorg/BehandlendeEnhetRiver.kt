@@ -29,14 +29,14 @@ class BehandlendeEnhetRiver(
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) = runBlocking {
+        log.info(
+            "Henter behandlende enhet for {}, {}",
+            keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
+            keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText())
+        )
         val enhet = personinfoService.finnBehandlendeEnhet(packet["fødselsnummer"].asText())
         packet["@løsning"] = mapOf(
             "HentEnhet" to enhet
-        )
-        log.info(
-            "Løser behov for behandlende enhet for {}, {}",
-            keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
-            keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText())
         )
         context.send(packet.toJson())
     }
