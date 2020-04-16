@@ -24,7 +24,7 @@ class BehandlendeEnhetRiver(
                 it.requireAll("@behov", listOf("HentEnhet"))
                 it.forbid("@løsning")
             }
-            validate { it.requireKey("fødselsnummer", "spleisBehovId") }
+            validate { it.requireKey("fødselsnummer", "spleisBehovId", "vedtaksperiodeId") }
         }.register(this)
     }
 

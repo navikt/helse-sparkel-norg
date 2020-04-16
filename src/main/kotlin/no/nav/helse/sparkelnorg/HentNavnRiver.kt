@@ -24,7 +24,7 @@ class HentNavnRiver(
                 it.requireAll("@behov", listOf("HentPersoninfo"))
                 it.forbid("@løsning")
             }
-            validate { it.requireKey("fødselsnummer", "spleisBehovId") }
+            validate { it.requireKey("fødselsnummer", "spleisBehovId", "vedtaksperiodeId") }
         }.register(this)
     }
 
@@ -36,7 +36,8 @@ class HentNavnRiver(
                 "spleisBehovId",
                 packet["spleisBehovId"].asText()
             ),
-            keyValue("spleisBehovId", packet["spleisBehovId"].asText())
+            keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
+            keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText())
         )
         val person = personinfoService.finnPerson(fnr) ?: return@runBlocking
 
