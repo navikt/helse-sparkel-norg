@@ -1,6 +1,5 @@
 package no.nav.helse.sparkelnorg
 
-import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -10,21 +9,20 @@ import no.nav.helse.rapids_rivers.River
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-@KtorExperimentalAPI
 class HentNavnRiver(
     rapidsConnection: RapidsConnection,
     private val personinfoService: PersoninfoService
 ) : River.PacketListener {
-    private val log: Logger = LoggerFactory.getLogger("hent-navn")
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
     private val sikkerLogg: Logger = LoggerFactory.getLogger("tjenestekall")
 
     init {
         River(rapidsConnection).apply {
             validate {
-                it.requireAll("@behov", listOf("HentPersoninfo"))
-                it.forbid("@løsning")
+                it.demandAll("@behov", listOf("HentPersoninfo"))
+                it.rejectKey("@løsning")
+                it.requireKey("fødselsnummer", "spleisBehovId", "vedtaksperiodeId")
             }
-            validate { it.requireKey("fødselsnummer", "spleisBehovId", "vedtaksperiodeId") }
         }.register(this)
     }
 
@@ -39,19 +37,25 @@ class HentNavnRiver(
             keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
             keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText())
         )
-        val person = personinfoService.finnPerson(fnr) ?: return@runBlocking
-
-        packet["@løsning"] = mapOf(
-            "HentPersoninfo" to mapOf(
-                "fornavn" to person.personnavn.fornavn,
-                "mellomnavn" to person.personnavn.mellomnavn,
-                "etternavn" to person.personnavn.etternavn
+        try {
+            val person = personinfoService.finnPerson(fnr) ?: return@runBlocking
+            packet["@løsning"] = mapOf(
+                "HentPersoninfo" to mapOf(
+                    "fornavn" to person.personnavn.fornavn,
+                    "mellomnavn" to person.personnavn.mellomnavn,
+                    "etternavn" to person.personnavn.etternavn
+                )
             )
-        )
-        context.send(packet.toJson())
+            context.send(packet.toJson())
+        } catch (err: Exception) {
+            log.error("feil ved håntering av behov {} for {}: ${err.message}",
+                keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
+                keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText()),
+                err)
+        }
     }
 
     override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
-        sikkerLogg.debug(problems.toExtendedReport())
+        sikkerLogg.error("Forstod ikke HentPersoninfo-behov:\n${problems.toExtendedReport()}")
     }
 }

@@ -1,10 +1,10 @@
 package no.nav.helse.sparkelnorg
 
 import kotlinx.coroutines.delay
-import kotlinx.io.errors.IOException
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.IOException
 import kotlin.reflect.KClass
 
 private val log: Logger = LoggerFactory.getLogger("SoapHelpers")

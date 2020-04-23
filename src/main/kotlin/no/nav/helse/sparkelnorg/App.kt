@@ -5,7 +5,6 @@ import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logging
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
 import org.slf4j.Logger
@@ -15,14 +14,12 @@ internal const val NAV_OPPFOLGING_UTLAND_KONTOR_NR = "0393"
 
 private val sikkerLogg: Logger = LoggerFactory.getLogger("tjenestekall")
 
-@KtorExperimentalAPI
 fun main() {
     val serviceUser = readServiceUserCredentials()
     val environment = readEnvironment()
     launchApplication(environment, serviceUser)
 }
 
-@KtorExperimentalAPI
 fun launchApplication(
     environment: Environment,
     serviceUser: ServiceUser

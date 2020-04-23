@@ -1,6 +1,5 @@
 package no.nav.helse.sparkelnorg
 
-import io.ktor.util.KtorExperimentalAPI
 import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -10,21 +9,20 @@ import no.nav.helse.rapids_rivers.River
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-@KtorExperimentalAPI
 class BehandlendeEnhetRiver(
     rapidsConnection: RapidsConnection,
     private val personinfoService: PersoninfoService
 ) : River.PacketListener {
-    private val log: Logger = LoggerFactory.getLogger("hent-navn")
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
     private val sikkerLogg: Logger = LoggerFactory.getLogger("tjenestekall")
 
     init {
         River(rapidsConnection).apply {
             validate {
-                it.requireAll("@behov", listOf("HentEnhet"))
-                it.forbid("@løsning")
+                it.demandAll("@behov", listOf("HentEnhet"))
+                it.rejectKey("@løsning")
+                it.requireKey("fødselsnummer", "spleisBehovId", "vedtaksperiodeId")
             }
-            validate { it.requireKey("fødselsnummer", "spleisBehovId", "vedtaksperiodeId") }
         }.register(this)
     }
 
@@ -34,14 +32,21 @@ class BehandlendeEnhetRiver(
             keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
             keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText())
         )
-        val enhet = personinfoService.finnBehandlendeEnhet(packet["fødselsnummer"].asText())
-        packet["@løsning"] = mapOf(
-            "HentEnhet" to enhet
-        )
-        context.send(packet.toJson())
+        try {
+            val enhet = personinfoService.finnBehandlendeEnhet(packet["fødselsnummer"].asText())
+            packet["@løsning"] = mapOf(
+                "HentEnhet" to enhet
+            )
+            context.send(packet.toJson())
+        } catch (err: Exception) {
+            log.error("feil ved håntering av behov {} for {}: ${err.message}",
+                keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
+                keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText()),
+                err)
+        }
     }
 
     override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
-        sikkerLogg.debug(problems.toExtendedReport())
+        sikkerLogg.error("Forstod ikke HentEnhet-behov:\n${problems.toExtendedReport()}")
     }
 }

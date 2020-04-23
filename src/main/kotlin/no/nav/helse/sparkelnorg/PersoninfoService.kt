@@ -1,7 +1,6 @@
 package no.nav.helse.sparkelnorg
 
 import com.ctc.wstx.exc.WstxException
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentGeografiskTilknytningPersonIkkeFunnet
 import no.nav.tjeneste.virksomhet.person.v3.binding.HentPersonPersonIkkeFunnet
 import no.nav.tjeneste.virksomhet.person.v3.binding.PersonV3
@@ -14,10 +13,9 @@ import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentGeografiskTilknytningR
 import no.nav.tjeneste.virksomhet.person.v3.meldinger.HentPersonRequest
 import java.io.IOException
 
-@KtorExperimentalAPI
 class PersoninfoService(private val norg2Client: Norg2Client, private val personV3: PersonV3) {
     suspend fun finnBehandlendeEnhet(fødselsnummer: String): String {
-        val diskresjonskode = requireNotNull(finnPerson(fødselsnummer))?.diskresjonskode?.value
+        val diskresjonskode = requireNotNull(finnPerson(fødselsnummer)).diskresjonskode?.value
         val geografiskTilknytning =
             requireNotNull(finnGeografiskTilknytning(fødselsnummer)?.geografiskTilknytning?.geografiskTilknytning)
         return norg2Client.finnBehandlendeEnhet(geografiskTilknytning, diskresjonskode).enhetNr

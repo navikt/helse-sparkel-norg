@@ -1,32 +1,24 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.5.2"
-val ktorVersion = "1.2.4"
+val ktorVersion = "1.3.1"
 val wireMockVersion = "2.26.0"
-val jacksonVersion = "2.10.3"
-val logstashEncoderVersion = "6.3"
 val cxfVersion = "3.3.5"
 
 plugins {
-    kotlin("jvm") version "1.3.50"
+    kotlin("jvm") version "1.3.72"
 }
 
 group = "no.nav.helse"
 
 dependencies {
+    implementation("com.github.navikt:rapids-and-rivers:1.73dddb5")
+
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
 
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-server-host-common:$ktorVersion")
-    implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
-
-    implementation("io.micrometer:micrometer-registry-prometheus:1.1.4")
     implementation("no.nav.tjenestespesifikasjoner:person-v3-tjenestespesifikasjon:1.2019.09.25-00.21-49b69f0625e0")
-    implementation("net.logstash.logback:logstash-logback-encoder:$logstashEncoderVersion")
-
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("org.apache.cxf:cxf-rt-frontend-jaxws:$cxfVersion")
     implementation("org.apache.cxf:cxf-rt-features-logging:$cxfVersion")
@@ -39,11 +31,6 @@ dependencies {
     implementation("com.sun.xml.ws:jaxws-tools:2.3.1") {
         exclude(group = "com.sun.xml.ws", module = "policy")
     }
-
-    implementation("io.prometheus:simpleclient_common:0.8.1")
-    implementation("io.prometheus:simpleclient:0.8.1")
-
-    implementation("com.github.navikt:rapids-and-rivers:1.1822995")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
@@ -62,7 +49,7 @@ dependencies {
 repositories {
     mavenCentral()
     maven("https://jitpack.io")
-    maven("http://packages.confluent.io/maven/")
+    maven("https://packages.confluent.io/maven/")
 }
 
 java {
