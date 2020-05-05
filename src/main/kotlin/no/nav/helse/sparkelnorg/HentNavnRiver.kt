@@ -6,6 +6,7 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import no.nav.tjeneste.virksomhet.person.v3.informasjon.Kjoenn
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -43,7 +44,9 @@ class HentNavnRiver(
                 "HentPersoninfo" to mapOf(
                     "fornavn" to person.personnavn.fornavn,
                     "mellomnavn" to person.personnavn.mellomnavn,
-                    "etternavn" to person.personnavn.etternavn
+                    "etternavn" to person.personnavn.etternavn,
+                    "fødselsdato" to person.foedselsdato.foedselsdato.toGregorianCalendar().toZonedDateTime().toLocalDate(),
+                    "kjønn" to person.kjoenn.tilKjønn()
                 )
             )
             context.send(packet.toJson())
@@ -58,4 +61,14 @@ class HentNavnRiver(
     override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
         sikkerLogg.error("Forstod ikke HentPersoninfo-behov:\n${problems.toExtendedReport()}")
     }
+}
+
+private fun Kjoenn.tilKjønn() = when(this.kjoenn.value) {
+    "K" -> Kjønn.Kvinne
+    "M" -> Kjønn.Mann
+    else -> Kjønn.Ukjent
+}
+
+enum class Kjønn {
+    Mann, Kvinne, Ukjent
 }

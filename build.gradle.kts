@@ -12,7 +12,7 @@ plugins {
 group = "no.nav.helse"
 
 dependencies {
-    implementation("com.github.navikt:rapids-and-rivers:1.73dddb5")
+    implementation("com.github.navikt:rapids-and-rivers:1.47c31b4")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
@@ -36,13 +36,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 
-    testImplementation("no.nav:kafka-embedded-env:2.3.0")
-    testImplementation("org.awaitility:awaitility:4.0.1")
-    testImplementation("com.github.tomakehurst:wiremock:$wireMockVersion") {
-        exclude(group = "junit")
-    }
-
-    testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.mockk:mockk:1.9.3")
 }
 
