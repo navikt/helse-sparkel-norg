@@ -12,7 +12,7 @@ plugins {
 group = "no.nav.helse"
 
 dependencies {
-    implementation("com.github.navikt:rapids-and-rivers:1.47c31b4")
+    implementation("com.github.navikt:rapids-and-rivers:1.74ae9cb")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
@@ -41,6 +41,7 @@ dependencies {
 
 repositories {
     mavenCentral()
+    maven("https://kotlin.bintray.com/ktor")
     maven("https://jitpack.io")
     maven("https://packages.confluent.io/maven/")
 }
