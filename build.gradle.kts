@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.5.2"
-val ktorVersion = "1.3.1"
+val ktorVersion = "1.3.2"
 val wireMockVersion = "2.26.0"
 val cxfVersion = "3.3.5"
 
