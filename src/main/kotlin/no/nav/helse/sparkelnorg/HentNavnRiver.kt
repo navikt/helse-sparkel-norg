@@ -22,7 +22,7 @@ class HentNavnRiver(
             validate {
                 it.demandAll("@behov", listOf("HentPersoninfo"))
                 it.rejectKey("@løsning")
-                it.requireKey("fødselsnummer", "spleisBehovId", "vedtaksperiodeId")
+                it.requireKey("fødselsnummer", "spleisBehovId", "@id")
             }
         }.register(this)
     }
@@ -31,12 +31,8 @@ class HentNavnRiver(
         val fnr = packet["fødselsnummer"].asText()
         log.info(
             "Henter personinfo for {}, {}",
-            keyValue(
-                "spleisBehovId",
-                packet["spleisBehovId"].asText()
-            ),
             keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
-            keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText())
+            keyValue("@id", packet["@id"].asText())
         )
         try {
             val person = personinfoService.finnPerson(fnr) ?: return@runBlocking
@@ -53,7 +49,7 @@ class HentNavnRiver(
         } catch (err: Exception) {
             log.error("feil ved håntering av behov {} for {}: ${err.message}",
                 keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
-                keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText()),
+                keyValue("@id", packet["@id"].asText()),
                 err)
         }
     }

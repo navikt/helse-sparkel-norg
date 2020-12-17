@@ -20,8 +20,9 @@ class BehandlendeEnhetRiver(
         River(rapidsConnection).apply {
             validate {
                 it.demandAll("@behov", listOf("HentEnhet"))
+                it.requireKey("@id")
                 it.rejectKey("@løsning")
-                it.requireKey("fødselsnummer", "spleisBehovId", "vedtaksperiodeId")
+                it.requireKey("fødselsnummer", "spleisBehovId")
             }
         }.register(this)
     }
@@ -30,7 +31,7 @@ class BehandlendeEnhetRiver(
         log.info(
             "Henter behandlende enhet for {}, {}",
             keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
-            keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText())
+            keyValue("@id", packet["@id"].asText())
         )
         try {
             val enhet = personinfoService.finnBehandlendeEnhet(packet["fødselsnummer"].asText())
@@ -41,7 +42,7 @@ class BehandlendeEnhetRiver(
         } catch (err: Exception) {
             log.error("feil ved håntering av behov {} for {}: ${err.message}",
                 keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
-                keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText()),
+                keyValue("@id", packet["@id"].asText()),
                 err)
         }
     }

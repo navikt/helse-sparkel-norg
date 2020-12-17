@@ -55,7 +55,6 @@ val behov = """{
   "@id": "2dad52b1-f58e-4c26-bb24-970705cdea67",
   "@opprettet": "2020-05-05T11:16:12.678539",
   "spleisBehovId": "c2d3ce2e-abeb-4c27-a7d3-e45f23ef26f7",
-  "vedtaksperiodeId": "05310287-4c76-424b-b1e5-9484b90fb6e8",
   "fødselsnummer": "12345",
   "orgnummer": "89123"
 }
