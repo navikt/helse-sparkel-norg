@@ -39,7 +39,7 @@ spec:
     - name: NORG2_BASE_URL
       value: https://app.adeo.no/norg2/api/v1
     - name: PERSONV3_URL
-      value: https://wasapp.adeo.no/tpsws/ws/Person/v3
+      value: https://app.adeo.no/tpsws-aura/ws/Person/v3
     - name: SECURITY_TOKEN_SERVICE_URL
       value: https://sts.adeo.no/SecurityTokenServiceProvider/
     - name: KAFKA_BOOTSTRAP_SERVERS
