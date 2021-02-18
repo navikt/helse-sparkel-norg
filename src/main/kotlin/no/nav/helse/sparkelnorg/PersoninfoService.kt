@@ -23,9 +23,9 @@ class PersoninfoService(private val norg2Client: Norg2Client, private val person
 
     internal suspend fun finnPerson(fødselsnummer: String): Person? = try {
         retry(
-            callName = "tps_hent_person",
-            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
-            legalExceptions = *arrayOf(IOException::class, WstxException::class, IllegalStateException::class)
+            "tps_hent_person",
+            IOException::class, WstxException::class, IllegalStateException::class,
+            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L)
         ) {
             personV3.hentPerson(
                 HentPersonRequest().withAktoer(
@@ -44,8 +44,8 @@ class PersoninfoService(private val norg2Client: Norg2Client, private val person
     private suspend fun finnGeografiskTilknytning(fødselsnummer: String): HentGeografiskTilknytningResponse? = try {
         retry(
             callName = "tps_hent_geografisktilknytning",
-            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
-            legalExceptions = *arrayOf(IOException::class, WstxException::class, IllegalStateException::class)
+            IOException::class, WstxException::class, IllegalStateException::class,
+            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L)
         ) {
             personV3.hentGeografiskTilknytning(
                 HentGeografiskTilknytningRequest().withAktoer(
