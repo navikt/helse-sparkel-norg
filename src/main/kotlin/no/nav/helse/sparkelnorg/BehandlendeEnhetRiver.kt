@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import org.slf4j.Logger
@@ -27,7 +28,7 @@ class BehandlendeEnhetRiver(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) = runBlocking {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) = runBlocking {
         log.info(
             "Henter behandlende enhet for {}, {}",
             keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
@@ -38,7 +39,7 @@ class BehandlendeEnhetRiver(
             packet["@løsning"] = mapOf(
                 "HentEnhet" to enhet
             )
-            context.send(packet.toJson())
+            context.publish(packet.toJson())
         } catch (err: Exception) {
             log.error("feil ved håntering av behov {} for {}: ${err.message}",
                 keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
@@ -47,7 +48,7 @@ class BehandlendeEnhetRiver(
         }
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         sikkerLogg.error("Forstod ikke HentEnhet-behov:\n${problems.toExtendedReport()}")
     }
 }

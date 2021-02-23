@@ -2,10 +2,7 @@ package no.nav.helse.sparkelnorg
 
 import kotlinx.coroutines.runBlocking
 import net.logstash.logback.argument.StructuredArguments.keyValue
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageProblems
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.River
+import no.nav.helse.rapids_rivers.*
 import no.nav.tjeneste.virksomhet.person.v3.informasjon.Kjoenn
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -27,7 +24,7 @@ class HentNavnRiver(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) = runBlocking {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) = runBlocking {
         val fnr = packet["fødselsnummer"].asText()
         log.info(
             "Henter personinfo for {}, {}",
@@ -45,7 +42,7 @@ class HentNavnRiver(
                     "kjønn" to person.kjoenn.tilKjønn()
                 )
             )
-            context.send(packet.toJson())
+            context.publish(packet.toJson())
         } catch (err: Exception) {
             log.error("feil ved håntering av behov {} for {}: ${err.message}",
                 keyValue("spleisBehovId", packet["spleisBehovId"].asText()),
@@ -54,7 +51,7 @@ class HentNavnRiver(
         }
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         sikkerLogg.error("Forstod ikke HentPersoninfo-behov:\n${problems.toExtendedReport()}")
     }
 }

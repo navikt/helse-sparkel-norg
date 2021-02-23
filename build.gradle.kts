@@ -12,11 +12,10 @@ repositories {
     mavenCentral()
     maven("https://kotlin.bintray.com/ktor")
     maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
 }
 
 dependencies {
-    implementation("com.github.navikt:rapids-and-rivers:6d6256d7cc")
+    implementation("com.github.navikt:rapids-and-rivers:1.5e3ca6a")
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
@@ -78,7 +77,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "6.8.2"
+        gradleVersion = "6.8.3"
     }
 }
 
