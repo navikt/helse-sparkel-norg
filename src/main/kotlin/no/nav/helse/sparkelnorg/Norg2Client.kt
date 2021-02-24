@@ -3,13 +3,13 @@ package no.nav.helse.sparkelnorg
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
+import io.ktor.client.features.*
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpStatement
-import io.ktor.http.ContentType
+import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.NotFound
-import io.ktor.http.contentType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -28,11 +28,20 @@ class Norg2Client(
                     parameter("disk", diskresjonskode)
                 }
             }.execute()
-            if (httpResponse.status == NotFound) {
-                log.info("Fant ikke lokalt NAV-kontor for geografisk tilhørighet: $geografiskOmraade, setter da NAV-kontor oppfølging utland som lokalt navkontor: $NAV_OPPFOLGING_UTLAND_KONTOR_NR")
-                Enhet(NAV_OPPFOLGING_UTLAND_KONTOR_NR)
-            } else {
-                httpResponse.call.response.receive()
+            when {
+                httpResponse.status.isSuccess() -> {
+                    httpResponse.call.response.receive()
+                }
+                httpResponse.status == NotFound -> {
+                    log.info("Fant ikke lokalt NAV-kontor for geografisk tilhørighet: $geografiskOmraade, setter da NAV-kontor oppfølging utland som lokalt navkontor: $NAV_OPPFOLGING_UTLAND_KONTOR_NR")
+                    Enhet(NAV_OPPFOLGING_UTLAND_KONTOR_NR)
+                }
+                else -> {
+                    throw ClientRequestException(
+                        httpResponse,
+                        "Statuskode: ${httpResponse.status.description} feil på oppslag mot behandlende enhet på geografisk område: $geografiskOmraade"
+                    )
+                }
             }
         }
 }

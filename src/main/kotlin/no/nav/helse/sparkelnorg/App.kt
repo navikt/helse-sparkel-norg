@@ -59,4 +59,5 @@ private fun simpleHttpClient(serializer: JacksonSerializer? = JacksonSerializer(
     install(JsonFeature) {
         this.serializer = serializer
     }
+    expectSuccess = false
 }
