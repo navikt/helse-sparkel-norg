@@ -116,7 +116,7 @@ class BehandlendeEnhetRiverTest {
                     }
                     "/baseurl/norg2/api/v1/enhet/navkontor/3407" -> {
                         respond(
-                            "{\"enhetNr\": $NAV_GØVIK }",
+                            "{\"enhetNr\": $NAV_GØVIK, \"navn\": \"Nav Gøvik\", \"type\": \"LOKAL\" }",
                             status = HttpStatusCode.OK,
                             headersOf(name = HttpHeaders.ContentType, value = "application/json")
                         )
