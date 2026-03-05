@@ -33,7 +33,7 @@ jobs:
         id: changed-files
         uses: "nais/what-changed@main"
         with:
-          files: deploy/dev.yml, deploy/prod.yml
+          files: '.nais/*'
 
       - uses: actions/setup-java@v5
         with:

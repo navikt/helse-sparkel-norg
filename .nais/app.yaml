@@ -42,7 +42,7 @@ spec:
       maxSurge: 50%
       maxUnavailable: 50%
   kafka:
-    pool: nav-dev
+    pool: {{ kafkaPool }}
   azure:
     application:
       enabled: true
