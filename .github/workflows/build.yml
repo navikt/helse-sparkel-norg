@@ -40,8 +40,8 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v5
-      - name: gradle installDist
-        run: ./gradlew installDist
+      - name: gradle build installDist
+        run: ./gradlew build installDist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
