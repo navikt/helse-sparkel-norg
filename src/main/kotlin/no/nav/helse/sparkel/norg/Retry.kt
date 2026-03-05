@@ -1,4 +1,4 @@
-package no.nav.helse.sparkel
+package no.nav.helse.sparkel.norg
 
 import kotlinx.coroutines.delay
 import net.logstash.logback.argument.StructuredArguments.keyValue

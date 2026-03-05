@@ -11,7 +11,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
-import no.nav.helse.sparkel.retry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

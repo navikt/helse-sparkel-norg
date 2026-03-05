@@ -4,7 +4,6 @@ import com.github.navikt.tbd_libs.result_object.getOrThrow
 import com.github.navikt.tbd_libs.speed.GeografiskTilknytningResponse
 import com.github.navikt.tbd_libs.speed.PersonResponse
 import com.github.navikt.tbd_libs.speed.SpeedClient
-import no.nav.helse.sparkel.retry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
