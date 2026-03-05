@@ -1,1 +1,0 @@
-alter table if exists stoppknapp_meldinger rename to stoppknapp_melding;

@@ -1,9 +1,0 @@
-kafkaPool: nav-prod
-replicas:
-  min: "1"
-  max: "1"
-limits:
-  cpu: 2000m
-env:
-- name: OPPGAVE_ENDRET_TOPIC
-  value: oppgavehandtering.oppgavehendelse-v1

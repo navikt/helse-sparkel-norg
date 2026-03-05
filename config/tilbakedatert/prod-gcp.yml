@@ -1,9 +1,0 @@
-kafkaPool: nav-prod
-replicas:
-  min: "1"
-  max: "1"
-limits:
-  cpu: 2000m
-env:
-  - name: KAFKA_EXTRA_TOPIC
-    value: tsm.sykmeldinger
