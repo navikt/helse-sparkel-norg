@@ -38,6 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: nais/docker-build-push@v0
+        id: docker-build-push
         with:
           team: tbd
           tag: ${{ github.sha }}
