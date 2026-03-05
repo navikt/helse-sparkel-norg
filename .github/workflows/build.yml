@@ -41,5 +41,4 @@ jobs:
         id: docker-build-push
         with:
           team: tbd
-          tag: ${{ github.sha }}
           push_image: ${{ inputs.push_image }}
