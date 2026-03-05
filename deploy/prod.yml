@@ -37,12 +37,11 @@ spec:
       memory: 320Mi
   replicas:
     min: 2
-    max: 8
-    cpuThresholdPercentage: 400
+    max: 2
   strategy:
     rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 2
+      maxSurge: 50%
+      maxUnavailable: 50%
   kafka:
     pool: nav-prod
   azure:
