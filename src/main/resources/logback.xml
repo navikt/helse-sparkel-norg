@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <appender name="STDOUT_JSON" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Inkluder bare spesifikke MDC-felter, ettersom noen MDC-felter kan inneholde personinformasjon -->
+            <includeMdcKeyName>callId</includeMdcKeyName>
+            <includeMdcKeyName>trace_flags</includeMdcKeyName>
+            <includeMdcKeyName>span_id</includeMdcKeyName>
+            <includeMdcKeyName>trace_id</includeMdcKeyName>
+        </encoder>
     </appender>
 
     <appender name="team-logs" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <filter class="no.nav.helse.sparkel.norg.SkipTeamLogsMarkerFilter"/>
         <destination>team-logs.nais-system:5170</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"google_cloud_project":"${GOOGLE_CLOUD_PROJECT}","nais_namespace_name":"${NAIS_NAMESPACE}","nais_pod_name":"${HOSTNAME}","nais_container_name":"${NAIS_APP_NAME}"}</customFields>
+            <customFields>
+                {"google_cloud_project":"${GOOGLE_CLOUD_PROJECT}","nais_namespace_name":"${NAIS_NAMESPACE}","nais_pod_name":"${HOSTNAME}","nais_container_name":"${NAIS_APP_NAME}"}
+            </customFields>
             <includeContext>false</includeContext>
         </encoder>
     </appender>
@@ -15,13 +24,10 @@
     <logger name="tjenestekall" level="DEBUG" additivity="false">
         <appender-ref ref="team-logs"/>
     </logger>
-    <logger name="org.apache.cxf.services" level="INFO" additivity="false">
-        <appender-ref ref="team-logs"/>
-    </logger>
-
-    <logger name="org.apache.cxf" level="WARN" />
+    <logger name="no.nav.helse" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT_JSON"/>
+        <appender-ref ref="team-logs"/>
     </root>
 </configuration>

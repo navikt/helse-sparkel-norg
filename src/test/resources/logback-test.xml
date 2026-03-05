@@ -1,13 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="STDOUT_JSON" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
     </appender>
 
-    <logger name="org.apache" level="WARN" />
-    <logger name="kafka" level="WARN" />
+    <logger name="tjenestekall" level="DEBUG" />
 
-    <root level="INFO">
-        <appender-ref ref="STDOUT_JSON"/>
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

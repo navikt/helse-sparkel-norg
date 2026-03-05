@@ -8,18 +8,11 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.runBlocking
-import net.logstash.logback.argument.StructuredArguments.keyValue
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 
 class BehandlendeEnhetRiver(
     rapidsConnection: RapidsConnection,
     private val personinfoService: PersoninfoService
 ) : River.PacketListener {
-    private val log: Logger = LoggerFactory.getLogger(this::class.java)
-    private val sikkerLogg: Logger = LoggerFactory.getLogger("tjenestekall")
-
     init {
         River(rapidsConnection).apply {
             precondition {
@@ -34,41 +27,27 @@ class BehandlendeEnhetRiver(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext, metadata: MessageMetadata, meterRegistry: MeterRegistry) = runBlocking {
+    override fun onPacket(packet: JsonMessage, context: MessageContext, metadata: MessageMetadata, meterRegistry: MeterRegistry) {
         val meldingId = packet["@id"].asText()
-        val godkjenningsbehovId = packet["hendelseId"].asText()
+        val hendelseId = packet["hendelseId"].asText()
         val fødselsnummer = packet["fødselsnummer"].asText()
-        log.info(
-            "Henter behandlende enhet for {}, {}",
-            keyValue("hendelseId", godkjenningsbehovId),
-            keyValue("@id", meldingId)
-        )
-        try {
-            val enhet = withMDC("fødselsnummer" to fødselsnummer, "meldingId" to meldingId) {
-                personinfoService.finnBehandlendeEnhetsNr(fødselsnummer = fødselsnummer, callId = meldingId)
+        medMdc(
+            MdcKey.MELDING_ID to meldingId,
+            MdcKey.HENDELSE_ID to hendelseId,
+            MdcKey.IDENTITETSNUMMER to fødselsnummer,
+        ) {
+            loggInfo("Henter behandlende enhet")
+            try {
+                val enhet = runBlocking { personinfoService.finnBehandlendeEnhetsNr(fødselsnummer = fødselsnummer, callId = meldingId) }
+                packet["@løsning"] = mapOf("HentEnhet" to enhet)
+                context.publish(packet.toJson())
+            } catch (err: Exception) {
+                loggError("Feil ved håndtering av behov", err)
             }
-            packet["@løsning"] = mapOf(
-                "HentEnhet" to enhet
-            )
-            context.publish(packet.toJson())
-        } catch (err: Exception) {
-            log.error(
-                "Feil ved håndtering av behov {} for {}: ${err.message}",
-                keyValue("hendelseId", godkjenningsbehovId),
-                keyValue("@id", meldingId),
-                err
-            )
         }
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext, metadata: MessageMetadata) {
-        sikkerLogg.error("Forstod ikke HentEnhet-behov:\n${problems.toExtendedReport()}")
+        loggError("Forstod ikke HentEnhet-behov", "extendedReport" to problems.toExtendedReport())
     }
-}
-
-suspend fun <T> withMDC(vararg values: Pair<String, String>, block: suspend () -> T): T = try {
-    values.forEach { (key, value) -> MDC.put(key, value) }
-    block()
-} finally {
-    values.forEach { (key, _) -> MDC.remove(key) }
 }

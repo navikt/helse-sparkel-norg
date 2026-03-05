@@ -1,15 +1,10 @@
 package no.nav.helse.sparkel.norg
 
-import kotlinx.coroutines.delay
-import net.logstash.logback.argument.StructuredArguments.keyValue
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.io.IOException
 import javax.net.ssl.SSLHandshakeException
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlin.reflect.KClass
-
-private val log: Logger = LoggerFactory.getLogger("tjenestekall")
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.delay
 
 suspend fun <T> retry(
     callName: String,
@@ -29,7 +24,7 @@ suspend fun <T> retry(
             if (!isCausedBy(e, exceptionCausedByDepth, legalExceptions)) {
                 throw e
             }
-            log.warn("Failed to execute {}, retrying in $interval ms", keyValue("callName", callName), e)
+            e.loggWarn("Failed to execute callName=$callName, retrying in $interval ms", e)
         }
         delay(interval)
     }
