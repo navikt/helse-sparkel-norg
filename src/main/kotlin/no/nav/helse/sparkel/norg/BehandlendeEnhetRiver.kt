@@ -45,7 +45,7 @@ class BehandlendeEnhetRiver(
         )
         try {
             val enhet = withMDC("fødselsnummer" to fødselsnummer, "meldingId" to meldingId) {
-                personinfoService.finnBehandlendeEnhet(fødselsnummer = fødselsnummer, callId = meldingId)
+                personinfoService.finnBehandlendeEnhetsNr(fødselsnummer = fødselsnummer, callId = meldingId)
             }
             packet["@løsning"] = mapOf(
                 "HentEnhet" to enhet
