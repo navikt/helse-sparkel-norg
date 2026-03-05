@@ -26,18 +26,28 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Fetch all history for what-changed action
+
+      - name: Determine what to do
+        id: changed-files
+        uses: "nais/what-changed@main"
+        with:
+          files: deploy/dev.yml, deploy/prod.yml
+
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v5
-
       - name: gradle installDist
         run: ./gradlew installDist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: nais/docker-build-push@v0
+      - name: Build and push image and SBOM to OCI registry
+        if: steps.changed-files.outputs.changed != 'only-inputs'
+        uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
           team: tbd

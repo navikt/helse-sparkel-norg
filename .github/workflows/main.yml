@@ -29,7 +29,7 @@ jobs:
         env:
           CLUSTER: dev-gcp
           RESOURCE: deploy/dev.yml
-          IMAGE: ${{ needs.build.outputs.image }}
+          WORKLOAD_IMAGE: ${{ needs.build.outputs.image }}
 
   deployProd:
     name: Deploy to prod
@@ -41,4 +41,4 @@ jobs:
         env:
           CLUSTER: prod-gcp
           RESOURCE: deploy/prod.yml
-          IMAGE: ${{ needs.build.outputs.image }}
+          WORKLOAD_IMAGE: ${{ needs.build.outputs.image }}
