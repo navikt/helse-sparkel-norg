@@ -58,6 +58,10 @@ spec:
     - name: KAFKA_RAPID_TOPIC
       value: tbd.rapid.v1
   accessPolicy:
+    inbound:
+      rules:
+        - application: spesialist
+          namespace: tbd
     outbound:
       rules:
         - application: logging
