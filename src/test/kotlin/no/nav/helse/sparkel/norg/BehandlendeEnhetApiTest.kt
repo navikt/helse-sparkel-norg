@@ -322,7 +322,7 @@ class BehandlendeEnhetApiTest {
 
     private fun postBehandlendeEnhet(token: String?): Pair<Int, String> =
         Request.post("${serverUrl}/api/behandlende-enhet")
-            .bodyString("""{ "fødselsnummer": "12345678901" }""", ContentType.APPLICATION_JSON)
+            .bodyString("""{ "identitetsnummer": "12345678901" }""", ContentType.APPLICATION_JSON)
             .apply { token?.let { addHeader("Authorization", "Bearer $it") } }
             .execute()
             .handleResponse { response -> response.code to (EntityUtils.toString(response.entity) ?: "") }

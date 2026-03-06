@@ -22,11 +22,11 @@ class PersoninfoService(
         }
 
     suspend fun finnBehandlendeEnhet(
-        fødselsnummer: String,
+        identitetsnummer: String,
         callId: String,
     ): Enhet? {
-        val adresseBeskyttelse = finnAdressebeskyttelse(`fødselsnummer`, callId).norgkode
-        val geografiskTilknytning = finnGeografiskTilknytning(`fødselsnummer`, callId)
+        val adresseBeskyttelse = finnAdressebeskyttelse(identitetsnummer, callId).norgkode
+        val geografiskTilknytning = finnGeografiskTilknytning(identitetsnummer, callId)
         val geografiskOmraade = geografiskTilknytning.mestNøyaktig()
         sikkerlogg.info("Geografisk tilknytning: $geografiskTilknytning - spør NORG2 om behandlende enhet for $geografiskOmraade")
         val behandlendeEnhet = norg2Client.finnBehandlendeEnhet(geografiskOmraade, adresseBeskyttelse)

@@ -25,7 +25,7 @@ import java.net.URI
 import java.util.UUID
 
 data class BehandlendeEnhetRequest(
-    val fødselsnummer: String,
+    val identitetsnummer: String,
 )
 
 data class BehandlendeEnhetResponse(
@@ -70,7 +70,7 @@ fun Application.behandlendeEnhetApi(
             post("/api/behandlende-enhet") {
                 val request = call.receive<BehandlendeEnhetRequest>()
                 val callId = call.callId ?: UUID.randomUUID().toString()
-                val enhet = personinfoService.finnBehandlendeEnhet(request.fødselsnummer, callId)
+                val enhet = personinfoService.finnBehandlendeEnhet(request.identitetsnummer, callId)
                 if (enhet == null) {
                     call.respond(HttpStatusCode.NotFound)
                 } else {
