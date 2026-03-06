@@ -20,9 +20,9 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
+import org.slf4j.event.Level
 import java.net.URI
 import java.util.UUID
-import org.slf4j.event.Level
 
 data class BehandlendeEnhetRequest(
     val fødselsnummer: String,

@@ -92,7 +92,9 @@ private fun String.medTeamLogsDetaljer(teamLogsDetaljer: List<Pair<String, Any?>
         }
     }
 
-enum class MdcKey(val value: String) {
+enum class MdcKey(
+    val value: String,
+) {
     IDENTITETSNUMMER("identitetsnummer"),
     HENDELSE_ID("hendelseId"),
     MELDING_ID("meldingId"),

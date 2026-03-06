@@ -16,36 +16,43 @@ fun main() {
 }
 
 fun launchApplication(env: Map<String, String>) {
-    val norgRestClient = Norg2Client(
-        baseUrl = "http://norg2.org",
-        httpClient = simpleHttpClient()
-    )
+    val norgRestClient =
+        Norg2Client(
+            baseUrl = "http://norg2.org",
+            httpClient = simpleHttpClient(),
+        )
     val azureClient = createAzureTokenClientFromEnvironment(env)
-    val speedClient = SpeedClient(
-        httpClient = java.net.http.HttpClient.newHttpClient(),
-        objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule()),
-        tokenProvider = azureClient
-    )
+    val speedClient =
+        SpeedClient(
+            httpClient =
+                java.net.http.HttpClient
+                    .newHttpClient(),
+            objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule()),
+            tokenProvider = azureClient,
+        )
 
     val personinfoService = PersoninfoService(norgRestClient, speedClient)
 
-    RapidApplication.create(System.getenv(), builder = {
-        withKtorModule {
-            behandlendeEnhetApi(
-                personinfoService = personinfoService,
-                clientId = env.getValue("AZURE_APP_CLIENT_ID"),
-                issuerUrl = env.getValue("AZURE_OPENID_CONFIG_ISSUER"),
-                jwkProviderUri = env.getValue("AZURE_OPENID_CONFIG_JWKS_URI"),
-            )
-        }
-    }).apply {
-        BehandlendeEnhetRiver(this, personinfoService)
-    }.start()
+    RapidApplication
+        .create(System.getenv(), builder = {
+            withKtorModule {
+                behandlendeEnhetApi(
+                    personinfoService = personinfoService,
+                    clientId = env.getValue("AZURE_APP_CLIENT_ID"),
+                    issuerUrl = env.getValue("AZURE_OPENID_CONFIG_ISSUER"),
+                    jwkProviderUri = env.getValue("AZURE_OPENID_CONFIG_JWKS_URI"),
+                )
+            }
+        })
+        .apply {
+            BehandlendeEnhetRiver(this, personinfoService)
+        }.start()
 }
 
-private fun simpleHttpClient() = HttpClient {
-    install(ContentNegotiation) {
-        jackson()
+private fun simpleHttpClient() =
+    HttpClient {
+        install(ContentNegotiation) {
+            jackson()
+        }
+        expectSuccess = false
     }
-    expectSuccess = false
-}

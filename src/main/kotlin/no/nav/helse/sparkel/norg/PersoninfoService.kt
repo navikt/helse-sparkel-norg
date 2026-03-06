@@ -9,14 +9,22 @@ import org.slf4j.LoggerFactory
 
 private val sikkerlogg: Logger = LoggerFactory.getLogger("tjenestekall")
 
-class PersoninfoService(private val norg2Client: Norg2Client, private val speedClient: SpeedClient) {
-    suspend fun finnBehandlendeEnhetsNr(fødselsnummer: String, callId: String) =
-        finnBehandlendeEnhet(fødselsnummer, callId)?.enhetNr
-            ?: NAV_OPPFOLGING_UTLAND_KONTOR_NR.also {
-                loggInfo("Setter NAV-kontor oppfølging utland ($it) som lokalt navkontor, i mangel på kjent enhet")
-            }
+class PersoninfoService(
+    private val norg2Client: Norg2Client,
+    private val speedClient: SpeedClient,
+) {
+    suspend fun finnBehandlendeEnhetsNr(
+        fødselsnummer: String,
+        callId: String,
+    ) = finnBehandlendeEnhet(fødselsnummer, callId)?.enhetNr
+        ?: NAV_OPPFOLGING_UTLAND_KONTOR_NR.also {
+            loggInfo("Setter NAV-kontor oppfølging utland ($it) som lokalt navkontor, i mangel på kjent enhet")
+        }
 
-    suspend fun finnBehandlendeEnhet(fødselsnummer: String, callId: String): Enhet? {
+    suspend fun finnBehandlendeEnhet(
+        fødselsnummer: String,
+        callId: String,
+    ): Enhet? {
         val adresseBeskyttelse = finnAdressebeskyttelse(`fødselsnummer`, callId).norgkode
         val geografiskTilknytning = finnGeografiskTilknytning(`fødselsnummer`, callId)
         val geografiskOmraade = geografiskTilknytning.mestNøyaktig()
@@ -30,24 +38,36 @@ class PersoninfoService(private val norg2Client: Norg2Client, private val speedC
         return behandlendeEnhet
     }
 
-    private suspend fun finnAdressebeskyttelse(fødselsnummer: String, callId: String): PersonResponse.Adressebeskyttelse = retry(
-        "pdl_hent_person", retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L)
-    ) {
-        speedClient.hentPersoninfo(fødselsnummer, callId).getOrThrow().adressebeskyttelse
-    }
+    private suspend fun finnAdressebeskyttelse(
+        fødselsnummer: String,
+        callId: String,
+    ): PersonResponse.Adressebeskyttelse =
+        retry(
+            "pdl_hent_person",
+            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
+        ) {
+            speedClient.hentPersoninfo(fødselsnummer, callId).getOrThrow().adressebeskyttelse
+        }
 
-    private suspend fun finnGeografiskTilknytning(fødselsnummer: String, behovId: String): GeografiskTilknytningResponse = retry(
-        "pdl_hent_geografisktilknytning", retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L)
-    ) {
-        speedClient.hentGeografiskTilknytning(fødselsnummer, behovId).getOrThrow()
-    }
+    private suspend fun finnGeografiskTilknytning(
+        fødselsnummer: String,
+        behovId: String,
+    ): GeografiskTilknytningResponse =
+        retry(
+            "pdl_hent_geografisktilknytning",
+            retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
+        ) {
+            speedClient.hentGeografiskTilknytning(fødselsnummer, behovId).getOrThrow()
+        }
 
     private fun GeografiskTilknytningResponse.mestNøyaktig() = bydel ?: kommune ?: land ?: "ukjent"
+
     private val PersonResponse.Adressebeskyttelse.norgkode
-        get() = when (this) {
-            PersonResponse.Adressebeskyttelse.FORTROLIG -> "SPFO"
-            PersonResponse.Adressebeskyttelse.STRENGT_FORTROLIG -> "SPSF"
-            PersonResponse.Adressebeskyttelse.STRENGT_FORTROLIG_UTLAND -> "SPSF"
-            PersonResponse.Adressebeskyttelse.UGRADERT -> ""
-        }
+        get() =
+            when (this) {
+                PersonResponse.Adressebeskyttelse.FORTROLIG -> "SPFO"
+                PersonResponse.Adressebeskyttelse.STRENGT_FORTROLIG -> "SPSF"
+                PersonResponse.Adressebeskyttelse.STRENGT_FORTROLIG_UTLAND -> "SPSF"
+                PersonResponse.Adressebeskyttelse.UGRADERT -> ""
+            }
 }

@@ -11,23 +11,29 @@ import kotlinx.coroutines.runBlocking
 
 class BehandlendeEnhetRiver(
     rapidsConnection: RapidsConnection,
-    private val personinfoService: PersoninfoService
+    private val personinfoService: PersoninfoService,
 ) : River.PacketListener {
     init {
-        River(rapidsConnection).apply {
-            precondition {
-                it.requireAll("@behov", listOf("HentEnhet"))
-                it.forbid("@løsning")
-            }
-            validate {
-                it.requireKey("@id")
-                it.requireKey("fødselsnummer")
-                it.interestedIn("hendelseId")
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                precondition {
+                    it.requireAll("@behov", listOf("HentEnhet"))
+                    it.forbid("@løsning")
+                }
+                validate {
+                    it.requireKey("@id")
+                    it.requireKey("fødselsnummer")
+                    it.interestedIn("hendelseId")
+                }
+            }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext, metadata: MessageMetadata, meterRegistry: MeterRegistry) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+        metadata: MessageMetadata,
+        meterRegistry: MeterRegistry,
+    ) {
         val meldingId = packet["@id"].asText()
         val hendelseId = packet["hendelseId"].asText()
         val fødselsnummer = packet["fødselsnummer"].asText()
@@ -47,7 +53,11 @@ class BehandlendeEnhetRiver(
         }
     }
 
-    override fun onError(problems: MessageProblems, context: MessageContext, metadata: MessageMetadata) {
+    override fun onError(
+        problems: MessageProblems,
+        context: MessageContext,
+        metadata: MessageMetadata,
+    ) {
         loggError("Forstod ikke HentEnhet-behov", "extendedReport" to problems.toExtendedReport())
     }
 }
