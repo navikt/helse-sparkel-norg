@@ -13,13 +13,9 @@ import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import io.ktor.client.*
-import io.ktor.client.engine.cio.CIO as ClientCIO
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 import io.ktor.serialization.jackson.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
-import java.net.ServerSocket
-import java.net.URI
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import org.apache.hc.client5.http.fluent.Request
 import org.apache.hc.core5.http.ContentType
@@ -30,6 +26,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.net.ServerSocket
+import java.net.URI
+import io.ktor.client.engine.cio.CIO as ClientCIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 private const val CLIENT_ID = "sparkel-norg-junit"
 
@@ -43,33 +43,41 @@ class BehandlendeEnhetApiTest {
     private val port = ServerSocket(0).use { it.localPort }
     private val serverUrl = "http://localhost:$port"
 
-    private val embeddedServer = embeddedServer(CIO, port = port) {
-        behandlendeEnhetApi(
-            personinfoService = PersoninfoService(
-                norg2Client = Norg2Client(
-                    baseUrl = norgWireMock.baseUrl(),
-                    httpClient = HttpClient(ClientCIO) {
-                        install(ClientContentNegotiation) { jackson() }
-                        expectSuccess = false
-                    }
-                ),
-                speedClient = SpeedClient(
-                    httpClient = java.net.http.HttpClient.newHttpClient(),
-                    objectMapper = objectMapper,
-                    tokenProvider = createDefaultAzureTokenClient(
-                        tokenEndpoint = URI(mockOAuth2Server.tokenEndpointUrl("default").toString()),
-                        clientId = "mockClientId",
-                        clientSecret = "mockClientSecret",
+    private val embeddedServer =
+        embeddedServer(CIO, port = port) {
+            behandlendeEnhetApi(
+                personinfoService =
+                    PersoninfoService(
+                        norg2Client =
+                            Norg2Client(
+                                baseUrl = norgWireMock.baseUrl(),
+                                httpClient =
+                                    HttpClient(ClientCIO) {
+                                        install(ClientContentNegotiation) { jackson() }
+                                        expectSuccess = false
+                                    },
+                            ),
+                        speedClient =
+                            SpeedClient(
+                                httpClient =
+                                    java.net.http.HttpClient
+                                        .newHttpClient(),
+                                objectMapper = objectMapper,
+                                tokenProvider =
+                                    createDefaultAzureTokenClient(
+                                        tokenEndpoint = URI(mockOAuth2Server.tokenEndpointUrl("default").toString()),
+                                        clientId = "mockClientId",
+                                        clientSecret = "mockClientSecret",
+                                    ),
+                                baseUrl = speedWireMock.baseUrl(),
+                                scope = "test-scope",
+                            ),
                     ),
-                    baseUrl = speedWireMock.baseUrl(),
-                    scope = "test-scope"
-                )
-            ),
-            clientId = CLIENT_ID,
-            issuerUrl = mockOAuth2Server.issuerUrl("default").toString(),
-            jwkProviderUri = mockOAuth2Server.jwksUrl("default").toString(),
-        )
-    }.start(wait = false)
+                clientId = CLIENT_ID,
+                issuerUrl = mockOAuth2Server.issuerUrl("default").toString(),
+                jwkProviderUri = mockOAuth2Server.jwksUrl("default").toString(),
+            )
+        }.start(wait = false)
 
     @AfterAll
     fun teardown() {
@@ -93,24 +101,25 @@ class BehandlendeEnhetApiTest {
         stubPerson()
         stubGeografiskTilknytning(
             """
-                {
-                    "type": "BYDEL",
-                    "land": null,
-                    "kommune": "$kommune",
-                    "bydel": "$bydel",
-                    "kilde": "PDL"
-                }
-            """.trimIndent()
+            {
+                "type": "BYDEL",
+                "land": null,
+                "kommune": "$kommune",
+                "bydel": "$bydel",
+                "kilde": "PDL"
+            }
+            """.trimIndent(),
         )
         stubNorg(
             geografiskOmraade = bydel,
-            json = """
+            json =
+                """
                 {
                     "enhetNr": "1337",
                     "navn": "Nav Gamle Oslo",
                     "type": "LOKAL"
                 }
-            """.trimIndent()
+                """.trimIndent(),
         )
 
         // When:
@@ -137,24 +146,25 @@ class BehandlendeEnhetApiTest {
         stubPerson()
         stubGeografiskTilknytning(
             """
-                {
-                    "type": "KOMMUNE",
-                    "land": null,
-                    "kommune": "$kommune",
-                    "bydel": null,
-                    "kilde": "PDL"
-                }
-            """.trimIndent()
+            {
+                "type": "KOMMUNE",
+                "land": null,
+                "kommune": "$kommune",
+                "bydel": null,
+                "kilde": "PDL"
+            }
+            """.trimIndent(),
         )
         stubNorg(
             geografiskOmraade = kommune,
-            json = """
+            json =
+                """
                 {
                     "enhetNr": "1234",
                     "navn": "Nav Oslo",
                     "type": "LOKAL"
                 }
-            """.trimIndent()
+                """.trimIndent(),
         )
 
         // When:
@@ -181,24 +191,25 @@ class BehandlendeEnhetApiTest {
         stubPerson()
         stubGeografiskTilknytning(
             """
-                {
-                    "type": "UTLAND",
-                    "land": "AUS",
-                    "kommune": null,
-                    "bydel": null,
-                    "kilde": "PDL"
-                }
-            """.trimIndent()
+            {
+                "type": "UTLAND",
+                "land": "AUS",
+                "kommune": null,
+                "bydel": null,
+                "kilde": "PDL"
+            }
+            """.trimIndent(),
         )
         stubNorg(
             geografiskOmraade = land,
-            json = """
+            json =
+                """
                 {
                     "enhetNr": "1234",
                     "navn": "Nav Oslo",
                     "type": "LOKAL"
                 }
-            """.trimIndent()
+                """.trimIndent(),
         )
 
         // When:
@@ -223,7 +234,8 @@ class BehandlendeEnhetApiTest {
         // Given:
         stubPerson(adressebeskyttelse = "STRENGT_FORTROLIG")
         stubGeografiskTilknytning(
-            json = """
+            json =
+                """
                 {
                     "type": "KOMMUNE",
                     "land": null,
@@ -231,7 +243,7 @@ class BehandlendeEnhetApiTest {
                     "bydel": null,
                     "kilde": "PDL"
                 }
-            """.trimIndent()
+                """.trimIndent(),
         )
         norgWireMock.stubFor(
             get(urlPathEqualTo("/norg2/api/v1/enhet/navkontor/3407"))
@@ -244,9 +256,9 @@ class BehandlendeEnhetApiTest {
                             "navn": "Nav Gøvik",
                             "type": "LOKAL"
                         }
-                        """.trimIndent()
-                    )
-                )
+                        """.trimIndent(),
+                    ),
+                ),
         )
 
         // When:
@@ -272,7 +284,8 @@ class BehandlendeEnhetApiTest {
         val land = "SWE"
         stubPerson()
         stubGeografiskTilknytning(
-            json = """
+            json =
+                """
                 {
                     "type": "UTLAND",
                     "land": "$land",
@@ -280,13 +293,15 @@ class BehandlendeEnhetApiTest {
                     "bydel": null,
                     "kilde": "PDL"
                 }
-            """.trimIndent()
+                """.trimIndent(),
         )
         norgWireMock.stubFor(
             get(urlPathEqualTo("/norg2/api/v1/enhet/navkontor/$land")).willReturn(
-                aResponse().withStatus(404).withHeader("Content-Type", "application/json")
-                    .withBody("""{ "message": "Enheten eksisterer ikke" }""")
-            )
+                aResponse()
+                    .withStatus(404)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("""{ "message": "Enheten eksisterer ikke" }"""),
+            ),
         )
 
         // When:
@@ -317,11 +332,14 @@ class BehandlendeEnhetApiTest {
         assertEquals(401, statusCode)
     }
 
-    private fun bearerToken(issuerId: String = "default", audience: String = CLIENT_ID): String =
-        mockOAuth2Server.issueToken(issuerId = issuerId, audience = audience).serialize()
+    private fun bearerToken(
+        issuerId: String = "default",
+        audience: String = CLIENT_ID,
+    ): String = mockOAuth2Server.issueToken(issuerId = issuerId, audience = audience).serialize()
 
     private fun postBehandlendeEnhet(token: String?): Pair<Int, String> =
-        Request.post("${serverUrl}/api/behandlende-enhet")
+        Request
+            .post("$serverUrl/api/behandlende-enhet")
             .bodyString("""{ "identitetsnummer": "12345678901" }""", ContentType.APPLICATION_JSON)
             .apply { token?.let { addHeader("Authorization", "Bearer $it") } }
             .execute()
@@ -332,39 +350,46 @@ class BehandlendeEnhetApiTest {
             post(urlPathEqualTo("/api/person")).willReturn(
                 okJson(
                     """
-                            {
-                                "fødselsdato": "1990-01-01",
-                                "dødsdato": null,
-                                "fornavn": "Test",
-                                "mellomnavn": null,
-                                "etternavn": "Testesen",
-                                "adressebeskyttelse": "$adressebeskyttelse",
-                                "kjønn": "MANN"
-                            }
-                            """.trimIndent()
-                )
-            )
+                    {
+                        "fødselsdato": "1990-01-01",
+                        "dødsdato": null,
+                        "fornavn": "Test",
+                        "mellomnavn": null,
+                        "etternavn": "Testesen",
+                        "adressebeskyttelse": "$adressebeskyttelse",
+                        "kjønn": "MANN"
+                    }
+                    """.trimIndent(),
+                ),
+            ),
         )
     }
 
-    private fun stubGeografiskTilknytning(@Language("json") json: String) {
+    private fun stubGeografiskTilknytning(
+        @Language("json") json: String,
+    ) {
         speedWireMock.stubFor(
             post(urlPathEqualTo("/api/geografisk_tilknytning")).willReturn(
-                okJson(json)
-            )
+                okJson(json),
+            ),
         )
     }
 
-    private fun stubNorg(geografiskOmraade: String, @Language("json") json: String) {
+    private fun stubNorg(
+        geografiskOmraade: String,
+        @Language("json") json: String,
+    ) {
         norgWireMock.stubFor(
             get(urlPathEqualTo("/norg2/api/v1/enhet/navkontor/$geografiskOmraade")).willReturn(
-                okJson(json)
-            )
+                okJson(json),
+            ),
         )
     }
 
-    private fun assertJsonEquals(@Language("json") expected: String, actual: String) {
+    private fun assertJsonEquals(
+        @Language("json") expected: String,
+        actual: String,
+    ) {
         assertEquals(objectMapper.readTree(expected), objectMapper.readTree(actual))
     }
 }
-
