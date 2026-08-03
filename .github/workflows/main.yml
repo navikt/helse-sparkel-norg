@@ -1,49 +1,73 @@
-name: Bygg og deploy main
+name: main - Bygg, test og deploy
 
 on:
   push:
     branches:
       - main
+    paths:
+      # Generelt oppsett - alt unntatt dokumentasjon / urelatert oppsett
+      - '**'
+      - '!**.md'
+      - '!CODEOWNERS'
+      - '!LICENSE'
+      - '!docs/**'
+      - '!.github/workflows/standard-dependabot-auto-merge.yml'
+      - '!.github/workflows/standard-dependency-submission.yml'
+      - '!.github/workflows/standard-pr.yml'
   schedule:
     - cron: '0 4 * * 3'
       timezone: 'Europe/Oslo'
+  workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
+  actions: read # for sarif
   contents: read
-  id-token: write
-  packages: read
+  security-events: write # push sarif to github security
+  id-token: write # for nais login
 
 jobs:
-  build:
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+  bygg-og-test:
+    name: Bygg og test
+    uses: navikt/helse-sas-github-workflows/.github/workflows/bygg-og-test-med-gradle.yml@2f6844aa5e6852c64522681b3edb09c99445ad59 # v1.0.1
+    permissions:
+      contents: read
 
-  deployDev:
-    name: Deploy to dev
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: nais/deploy/actions/deploy@v2
-        env:
-          CLUSTER: dev-gcp
-          RESOURCE: .nais/app.yaml
-          VARS: .nais/app-vars-dev.yaml
-          WORKLOAD_IMAGE: ${{ needs.build.outputs.image }}
+  bygg-image:
+    name: Bygg image
+    needs: bygg-og-test
+    uses: navikt/helse-sas-github-workflows/.github/workflows/bygg-image-med-jib.yml@2f6844aa5e6852c64522681b3edb09c99445ad59 # v1.0.1
+    permissions:
+      actions: read # for sarif upload on private repos
+      contents: read
+      id-token: write # for nais login
+      security-events: write # push sarif to github security
 
-  deployProd:
-    name: Deploy to prod
-    needs: [build, deployDev]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: nais/deploy/actions/deploy@v2
-        env:
-          CLUSTER: prod-gcp
-          RESOURCE: .nais/app.yaml
-          VARS: .nais/app-vars-prod.yaml
-          WORKLOAD_IMAGE: ${{ needs.build.outputs.image }}
+  deploy-dev:
+    name: Deploy til dev
+    needs: bygg-image
+    uses: navikt/helse-sas-github-workflows/.github/workflows/deploy.yml@2f6844aa5e6852c64522681b3edb09c99445ad59 # v1.0.1
+    with:
+      CLUSTER: dev-gcp
+      RESOURCE: .nais/app.yaml
+      VARS: .nais/app-vars-dev.yaml
+      WORKLOAD_IMAGE: ${{ needs.bygg-image.outputs.image_ref }}
+    permissions:
+      contents: read
+      id-token: write # for nais login
+
+  deploy-prod:
+    name: Deploy til prod
+    needs: [bygg-image, deploy-dev]
+    uses: navikt/helse-sas-github-workflows/.github/workflows/deploy.yml@2f6844aa5e6852c64522681b3edb09c99445ad59 # v1.0.1
+    with:
+      CLUSTER: prod-gcp
+      RESOURCE: .nais/app.yaml
+      VARS: .nais/app-vars-prod.yaml
+      WORKLOAD_IMAGE: ${{ needs.bygg-image.outputs.image_ref }}
+    permissions:
+      contents: read
+      id-token: write # for nais login

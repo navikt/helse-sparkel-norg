@@ -1,11 +1,9 @@
 [versions]
-kotlin = "2.3.10"
 ktor = "3.2.3"
 tbdLibs = "2026.01.22-09.16-1d3f6039"
+sasGradlePlugins = "20260803.1345"
 
 [libraries]
-junit-bom = "org.junit:junit-bom:6.0.2"
-
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -58,5 +56,4 @@ logback = [
 ]
 
 [plugins]
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-ktlint = "org.jlleitschuh.gradle.ktlint:14.0.1"
+sas-deployable = { id = "no.nav.helse.sas.sas-deployable", version.ref = "sasGradlePlugins" }

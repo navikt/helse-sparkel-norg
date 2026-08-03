@@ -1,4 +1,4 @@
-# sparkel-norg [![Build](https://github.com/navikt/helse-sparkel-norg/actions/workflows/build.yml/badge.svg)](https://github.com/navikt/helse-sparkel-norg/actions/workflows/main.yml)
+# sparkel-norg [![Bygg og deploy main](https://github.com/navikt/helse-sparkel-norg/actions/workflows/main.yml/badge.svg)](https://github.com/navikt/helse-sparkel-norg/actions/workflows/main.yml)
 
 Formålet med sparkel-norg er å svare på behov/http-kall med data fra systemet Norg. Det gjelder i all hovedsak
 geografisk tilhørighet.
