@@ -1,7 +1,7 @@
 [versions]
 ktor = "3.2.3"
 tbdLibs = "2026.01.22-09.16-1d3f6039"
-sasGradlePlugins = "20260803.1345"
+sasGradlePlugins = "20260804.1012"
 
 [libraries]
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
