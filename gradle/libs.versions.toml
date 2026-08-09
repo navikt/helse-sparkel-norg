@@ -20,7 +20,7 @@ ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 
 logback-classic = "ch.qos.logback:logback-classic:1.6.1"
 logback-logstashEncoder = "net.logstash.logback:logstash-logback-encoder:9.0"
-slf4jApi = "org.slf4j:slf4j-api:2.0.17"
+slf4jApi = "org.slf4j:slf4j-api:2.0.18"
 
 httpclient5-fluent = "org.apache.httpcomponents.client5:httpclient5-fluent:5.6.3"
 mockk = "io.mockk:mockk:1.14.11"
