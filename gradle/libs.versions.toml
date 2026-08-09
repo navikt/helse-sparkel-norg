@@ -27,7 +27,7 @@ mockk = "io.mockk:mockk:1.14.9"
 mock-oauth2-server = "no.nav.security:mock-oauth2-server:3.0.1"
 wiremock = "org.wiremock:wiremock-jetty12:3.13.2"
 
-rapidsAndRivers = "com.github.navikt:rapids-and-rivers:2026011411051768385145.e8ebad1177b4"
+rapidsAndRivers = "com.github.navikt:rapids-and-rivers:2026071513121784113927"
 
 tbdLibs-azureTokenClientDefault = { module = "com.github.navikt.tbd-libs:azure-token-client-default", version.ref = "tbdLibs" }
 tbdLibs-speedClient = { module = "com.github.navikt.tbd-libs:speed-client", version.ref = "tbdLibs" }
