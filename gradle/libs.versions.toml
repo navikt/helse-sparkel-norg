@@ -18,7 +18,7 @@ ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
 ktor-server-contentNegotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 
-logback-classic = "ch.qos.logback:logback-classic:1.6.2"
+logback-classic = "ch.qos.logback:logback-classic:1.6.3"
 logback-logstashEncoder = "net.logstash.logback:logstash-logback-encoder:9.0"
 slf4jApi = "org.slf4j:slf4j-api:2.0.18"
 
