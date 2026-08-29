@@ -14,7 +14,7 @@ dependencies {
     implementation(libs.tbdLibs.speedClient)
     implementation(libs.bundles.ktor.client)
     implementation(libs.bundles.ktor.server)
-    implementation(libs.bundles.logback)
+    implementation(libs.sykepengerLibs.logging)
 
     testImplementation(libs.mockk)
     testImplementation(libs.wiremock)

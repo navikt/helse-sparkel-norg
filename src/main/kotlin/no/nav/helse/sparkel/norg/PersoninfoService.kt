@@ -4,10 +4,7 @@ import com.github.navikt.tbd_libs.result_object.getOrThrow
 import com.github.navikt.tbd_libs.speed.GeografiskTilknytningResponse
 import com.github.navikt.tbd_libs.speed.PersonResponse
 import com.github.navikt.tbd_libs.speed.SpeedClient
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
-private val sikkerlogg: Logger = LoggerFactory.getLogger("tjenestekall")
+import no.nav.sykepenger.libs.logging.loggInfo
 
 class PersoninfoService(
     private val norg2Client: Norg2Client,
@@ -28,12 +25,19 @@ class PersoninfoService(
         val adresseBeskyttelse = finnAdressebeskyttelse(identitetsnummer, callId).norgkode
         val geografiskTilknytning = finnGeografiskTilknytning(identitetsnummer, callId)
         val geografiskOmraade = geografiskTilknytning.mestNøyaktig()
-        sikkerlogg.info("Geografisk tilknytning: $geografiskTilknytning - spør NORG2 om behandlende enhet for $geografiskOmraade")
+        loggInfo(
+            "Spør NORG2 om behandlende enhet",
+            "geografiskTilknytning" to geografiskTilknytning.toString(),
+            "geografiskOmraade" to geografiskOmraade,
+        )
         val behandlendeEnhet = norg2Client.finnBehandlendeEnhet(geografiskOmraade, adresseBeskyttelse)
         if (behandlendeEnhet == null) {
-            loggInfo("Fant ikke lokalt NAV-kontor for geografisk tilhørighet", "geografiskTilknytning" to geografiskOmraade)
+            loggInfo(
+                "Fant ikke lokalt NAV-kontor for geografisk tilhørighet",
+                "geografiskTilknytning" to geografiskOmraade,
+            )
         } else {
-            loggInfo("Fant behandlende enhet", "behandlendeEnhet" to behandlendeEnhet)
+            loggInfo("Fant behandlende enhet", "behandlendeEnhet" to behandlendeEnhet.toString())
         }
         return behandlendeEnhet
     }

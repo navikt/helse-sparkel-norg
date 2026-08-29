@@ -20,7 +20,6 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
-import org.slf4j.event.Level
 import java.net.URI
 import java.util.UUID
 
@@ -46,8 +45,6 @@ fun Application.behandlendeEnhetApi(
     }
     install(CallLogging) {
         disableDefaultColors()
-        logger = teamLogs
-        level = Level.INFO
         callIdMdc("callId")
         filter { call -> call.request.path() !in setOf("/metrics", "/isalive", "/isready") }
     }

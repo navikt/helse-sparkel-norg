@@ -8,6 +8,10 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.runBlocking
+import no.nav.sykepenger.libs.logging.MdcKey
+import no.nav.sykepenger.libs.logging.loggError
+import no.nav.sykepenger.libs.logging.loggInfo
+import no.nav.sykepenger.libs.logging.medMdc
 
 class BehandlendeEnhetRiver(
     rapidsConnection: RapidsConnection,
@@ -35,11 +39,9 @@ class BehandlendeEnhetRiver(
         meterRegistry: MeterRegistry,
     ) {
         val meldingId = packet["@id"].asText()
-        val hendelseId = packet["hendelseId"].asText()
         val fødselsnummer = packet["fødselsnummer"].asText()
         medMdc(
             MdcKey.MELDING_ID to meldingId,
-            MdcKey.HENDELSE_ID to hendelseId,
             MdcKey.IDENTITETSNUMMER to fødselsnummer,
         ) {
             loggInfo("Henter behandlende enhet")

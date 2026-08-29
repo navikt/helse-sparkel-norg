@@ -2,6 +2,7 @@ package no.nav.helse.sparkel.norg
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.delay
+import no.nav.sykepenger.libs.logging.navngittLogger
 import java.io.IOException
 import javax.net.ssl.SSLHandshakeException
 import kotlin.reflect.KClass
@@ -25,7 +26,9 @@ suspend fun <T> retry(
             if (!isCausedBy(e, exceptionCausedByDepth, legalExceptions)) {
                 throw e
             }
-            e.loggWarn("Failed to execute callName=$callName, retrying in $interval ms", e)
+
+            navngittLogger("no.nav.helse.sparkel.norg.retry")
+                .warn("Failed to execute callName=$callName, retrying in $interval ms", e)
         }
         delay(interval)
     }
