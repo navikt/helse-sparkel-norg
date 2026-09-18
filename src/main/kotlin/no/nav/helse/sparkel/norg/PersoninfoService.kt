@@ -1,6 +1,5 @@
 package no.nav.helse.sparkel.norg
 
-import com.github.navikt.tbd_libs.result_object.getOrThrow
 import com.github.navikt.tbd_libs.speed.GeografiskTilknytningResponse
 import com.github.navikt.tbd_libs.speed.PersonResponse
 import com.github.navikt.tbd_libs.speed.SpeedClient
@@ -48,9 +47,10 @@ class PersoninfoService(
     ): PersonResponse.Adressebeskyttelse =
         retry(
             "pdl_hent_person",
+            SpeedException::class,
             retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
         ) {
-            speedClient.hentPersoninfo(fødselsnummer, callId).getOrThrow().adressebeskyttelse
+            speedClient.hentPersoninfo(fødselsnummer, callId).getOrThrowSpeedException().adressebeskyttelse
         }
 
     private suspend fun finnGeografiskTilknytning(
@@ -59,9 +59,10 @@ class PersoninfoService(
     ): GeografiskTilknytningResponse =
         retry(
             "pdl_hent_geografisktilknytning",
+            SpeedException::class,
             retryIntervals = arrayOf(500L, 1000L, 3000L, 5000L, 10000L),
         ) {
-            speedClient.hentGeografiskTilknytning(fødselsnummer, behovId).getOrThrow()
+            speedClient.hentGeografiskTilknytning(fødselsnummer, behovId).getOrThrowSpeedException()
         }
 
     private fun GeografiskTilknytningResponse.mestNøyaktig() = bydel ?: kommune ?: land ?: "ukjent"

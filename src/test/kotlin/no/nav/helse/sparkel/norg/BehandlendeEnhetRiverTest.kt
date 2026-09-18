@@ -1,6 +1,7 @@
 package no.nav.helse.sparkel.norg
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
+import com.github.navikt.tbd_libs.result_object.Result
 import com.github.navikt.tbd_libs.result_object.ok
 import com.github.navikt.tbd_libs.speed.GeografiskTilknytningResponse
 import com.github.navikt.tbd_libs.speed.IdentResponse
@@ -17,6 +18,7 @@ import io.ktor.serialization.jackson.jackson
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -83,6 +85,24 @@ class BehandlendeEnhetRiverTest {
             ).ok()
         rapid.sendTestMessage(behov)
         assertEquals(0, rapid.inspektør.size)
+    }
+
+    @Test
+    fun `retryer feil fra speed`() {
+        every { speedClient.hentGeografiskTilknytning(any(), any()) } returnsMany
+            listOf(
+                Result.Error("Feil fra Speed: Uventet feil: Feil ved sending av http request"),
+                GeografiskTilknytningResponse(
+                    type = GeografiskTilknytningResponse.GeografiskTilknytningType.BYDEL,
+                    land = null,
+                    kommune = "3407",
+                    bydel = null,
+                    kilde = IdentResponse.KildeResponse.PDL,
+                ).ok(),
+            )
+        rapid.sendTestMessage(behov)
+        assertEquals(NAV_GØVIK, rapid.inspektør.message(0)["@løsning"]["HentEnhet"].textValue())
+        verify(exactly = 2) { speedClient.hentGeografiskTilknytning(any(), any()) }
     }
 
     @Language("JSON")
