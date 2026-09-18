@@ -7,6 +7,8 @@ import java.io.IOException
 import javax.net.ssl.SSLHandshakeException
 import kotlin.reflect.KClass
 
+private val logger = navngittLogger("no.nav.helse.sparkel.norg.retry")
+
 suspend fun <T> retry(
     callName: String,
     vararg legalExceptions: KClass<out Throwable> =
@@ -27,8 +29,12 @@ suspend fun <T> retry(
                 throw e
             }
 
-            navngittLogger("no.nav.helse.sparkel.norg.retry")
-                .warn("Failed to execute callName=$callName, retrying in $interval ms", e)
+            logger.warn(
+                "Kall feilet, prøver igjen",
+                e,
+                "kall" to callName,
+                "nesteForsøkOm" to "$interval ms",
+            )
         }
         delay(interval)
     }

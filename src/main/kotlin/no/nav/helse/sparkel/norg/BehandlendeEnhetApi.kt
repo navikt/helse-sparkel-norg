@@ -3,6 +3,7 @@ package no.nav.helse.sparkel.norg
 import com.auth0.jwk.JwkProviderBuilder
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.decodeURLQueryComponent
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -15,11 +16,15 @@ import io.ktor.server.plugins.callid.callId
 import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.request.receive
+import io.ktor.server.request.uri
 import io.ktor.server.response.respond
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
+import no.nav.sykepenger.libs.logging.MdcKey
+import no.nav.sykepenger.libs.logging.coMedMdc
 import java.net.URI
 import java.util.UUID
 
@@ -46,6 +51,8 @@ fun Application.behandlendeEnhetApi(
     install(CallLogging) {
         disableDefaultColors()
         callIdMdc("callId")
+        mdc(MdcKey.REQUEST_METHOD.value) { it.request.httpMethod.value }
+        mdc(MdcKey.REQUEST_URI.value) { it.request.uri.decodeURLQueryComponent() }
         filter { call -> call.request.path() !in setOf("/metrics", "/isalive", "/isready") }
     }
     install(ContentNegotiation) {
@@ -67,11 +74,13 @@ fun Application.behandlendeEnhetApi(
             post("/api/behandlende-enhet") {
                 val request = call.receive<BehandlendeEnhetRequest>()
                 val callId = call.callId ?: UUID.randomUUID().toString()
-                val enhet = personinfoService.finnBehandlendeEnhet(request.identitetsnummer, callId)
-                if (enhet == null) {
-                    call.respond(HttpStatusCode.NotFound)
-                } else {
-                    call.respond(BehandlendeEnhetResponse(enhet.enhetNr, enhet.navn, enhet.type))
+                coMedMdc(MdcKey.IDENTITETSNUMMER to request.identitetsnummer) {
+                    val enhet = personinfoService.finnBehandlendeEnhet(request.identitetsnummer, callId)
+                    if (enhet == null) {
+                        call.respond(HttpStatusCode.NotFound)
+                    } else {
+                        call.respond(BehandlendeEnhetResponse(enhet.enhetNr, enhet.navn, enhet.type))
+                    }
                 }
             }
         }

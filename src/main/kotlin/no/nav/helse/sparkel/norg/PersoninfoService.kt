@@ -14,7 +14,10 @@ class PersoninfoService(
         callId: String,
     ) = finnBehandlendeEnhet(fødselsnummer, callId)?.enhetNr
         ?: NAV_OPPFOLGING_UTLAND_KONTOR_NR.also {
-            loggInfo("Setter NAV-kontor oppfølging utland ($it) som lokalt navkontor, i mangel på kjent enhet")
+            loggInfo(
+                "Setter NAV-kontor oppfølging utland som lokalt navkontor, i mangel på kjent enhet",
+                "enhetNr" to it,
+            )
         }
 
     suspend fun finnBehandlendeEnhet(
