@@ -1,10 +1,10 @@
 group = "no.nav.helse.sparkel"
 
 plugins {
-    alias(libs.plugins.sas.deployable)
+    alias(libs.plugins.sykepenger.deployable)
 }
 
-sasDeployable {
+sykepengerDeployable {
     mainClass = "no.nav.helse.sparkel.norg.AppKt"
 }
 

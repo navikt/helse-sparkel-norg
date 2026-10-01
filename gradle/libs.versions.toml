@@ -1,7 +1,7 @@
 [versions]
 ktor = "3.6.0"
 tbdLibs = "20260930.1309"
-sasGradlePlugins = "20260930.1152"
+sykepengerGradlePlugins = "20261001.1657"
 
 [libraries]
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
@@ -49,4 +49,4 @@ ktor-server = [
 ]
 
 [plugins]
-sas-deployable = { id = "no.nav.helse.sas.sas-deployable", version.ref = "sasGradlePlugins" }
+sykepenger-deployable = { id = "no.nav.sykepenger.deployable", version.ref = "sykepengerGradlePlugins" }
