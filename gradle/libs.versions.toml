@@ -1,7 +1,7 @@
 [versions]
 ktor = "3.6.0"
 tbdLibs = "20260930.1309"
-sykepengerGradlePlugins = "20261001.1657"
+sykepengerGradlePlugins = "20261001.1830"
 
 [libraries]
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
