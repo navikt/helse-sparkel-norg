@@ -40,8 +40,6 @@ spec:
     rollingUpdate:
       maxSurge: 50%
       maxUnavailable: 50%
-  kafka:
-    pool: {{ kafkaPool }}
   azure:
     application:
       enabled: true
