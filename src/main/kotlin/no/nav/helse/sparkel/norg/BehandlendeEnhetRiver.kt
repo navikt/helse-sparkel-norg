@@ -38,8 +38,8 @@ class BehandlendeEnhetRiver(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val meldingId = packet["@id"].asText()
-        val fødselsnummer = packet["fødselsnummer"].asText()
+        val meldingId = packet["@id"].asString()
+        val fødselsnummer = packet["fødselsnummer"].asString()
         medMdc(
             MdcKey.MELDING_ID to meldingId,
             MdcKey.IDENTITETSNUMMER to fødselsnummer,

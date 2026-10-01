@@ -14,7 +14,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
-import io.ktor.serialization.jackson.jackson
+import io.ktor.serialization.jackson3.jackson
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -56,7 +56,7 @@ class BehandlendeEnhetRiverTest {
                 kilde = IdentResponse.KildeResponse.PDL,
             ).ok()
         rapid.sendTestMessage(behov)
-        assertEquals(NAV_GØVIK, rapid.inspektør.message(0)["@løsning"]["HentEnhet"].textValue())
+        assertEquals(NAV_GØVIK, rapid.inspektør.message(0)["@løsning"]["HentEnhet"].stringValue())
     }
 
     @Test
@@ -70,7 +70,7 @@ class BehandlendeEnhetRiverTest {
                 kilde = IdentResponse.KildeResponse.PDL,
             ).ok()
         rapid.sendTestMessage(behov)
-        assertEquals(NAV_OPPFOLGING_UTLAND_KONTOR_NR, rapid.inspektør.message(0)["@løsning"]["HentEnhet"].textValue())
+        assertEquals(NAV_OPPFOLGING_UTLAND_KONTOR_NR, rapid.inspektør.message(0)["@løsning"]["HentEnhet"].stringValue())
     }
 
     @Test
@@ -101,7 +101,7 @@ class BehandlendeEnhetRiverTest {
                 ).ok(),
             )
         rapid.sendTestMessage(behov)
-        assertEquals(NAV_GØVIK, rapid.inspektør.message(0)["@løsning"]["HentEnhet"].textValue())
+        assertEquals(NAV_GØVIK, rapid.inspektør.message(0)["@løsning"]["HentEnhet"].stringValue())
         verify(exactly = 2) { speedClient.hentGeografiskTilknytning(any(), any()) }
     }
 

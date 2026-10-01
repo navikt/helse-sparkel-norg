@@ -1,6 +1,6 @@
 [versions]
 ktor = "3.6.0"
-tbdLibs = "20260821.0852"
+tbdLibs = "20260930.1309"
 sasGradlePlugins = "20260930.1152"
 
 [libraries]
@@ -8,7 +8,7 @@ ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
-ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
+ktor-serialization-jackson3 = { module = "io.ktor:ktor-serialization-jackson3", version.ref = "ktor" }
 
 ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
 ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
@@ -36,7 +36,7 @@ ktor-client = [
     "ktor-client-cio",
     "ktor-client-contentNegotiation",
     "ktor-client-core",
-    "ktor-serialization-jackson"
+    "ktor-serialization-jackson3"
 ]
 ktor-server = [
     "ktor-server-auth",

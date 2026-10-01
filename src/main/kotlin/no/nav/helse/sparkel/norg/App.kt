@@ -1,13 +1,12 @@
 package no.nav.helse.sparkel.norg
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.navikt.tbd_libs.azure.createAzureTokenClientFromEnvironment
 import com.github.navikt.tbd_libs.speed.SpeedClient
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.jackson.jackson
+import io.ktor.serialization.jackson3.jackson
 import no.nav.helse.rapids_rivers.RapidApplication
+import tools.jackson.module.kotlin.jacksonObjectMapper
 
 internal const val NAV_OPPFOLGING_UTLAND_KONTOR_NR = "0393"
 
@@ -27,7 +26,7 @@ fun launchApplication(env: Map<String, String>) {
             httpClient =
                 java.net.http.HttpClient
                     .newHttpClient(),
-            objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule()),
+            objectMapper = jacksonObjectMapper(),
             tokenProvider = azureClient,
         )
 

@@ -1,7 +1,5 @@
 package no.nav.helse.sparkel.norg
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.navikt.tbd_libs.azure.createDefaultAzureTokenClient
 import com.github.navikt.tbd_libs.speed.SpeedClient
 import com.github.tomakehurst.wiremock.WireMockServer
@@ -13,7 +11,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import io.ktor.client.*
-import io.ktor.serialization.jackson.*
+import io.ktor.serialization.jackson3.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import no.nav.security.mock.oauth2.MockOAuth2Server
@@ -26,6 +24,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.net.ServerSocket
 import java.net.URI
 import io.ktor.client.engine.cio.CIO as ClientCIO
@@ -38,7 +37,7 @@ class BehandlendeEnhetApiTest {
     private val mockOAuth2Server = MockOAuth2Server().also(MockOAuth2Server::start)
     private val norgWireMock = WireMockServer(wireMockConfig().dynamicPort()).also(WireMockServer::start)
     private val speedWireMock = WireMockServer(wireMockConfig().dynamicPort()).also(WireMockServer::start)
-    private val objectMapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+    private val objectMapper = jacksonObjectMapper()
 
     private val port = ServerSocket(0).use { it.localPort }
     private val serverUrl = "http://localhost:$port"
