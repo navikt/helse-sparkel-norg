@@ -25,7 +25,7 @@ wiremock = "org.wiremock:wiremock-jetty12:3.13.2"
 
 rapidsAndRivers = "com.github.navikt:rapids-and-rivers:2026091610031789545782"
 
-sykepengerLibs-logging = "no.nav.sykepenger.libs:logging:20260829.1737"
+sykepengerLibs-logging = "no.nav.sykepenger.libs:logging:20261001.1823"
 
 tbdLibs-azureTokenClientDefault = { module = "com.github.navikt.tbd-libs:azure-token-client-default", version.ref = "tbdLibs" }
 tbdLibs-speedClient = { module = "com.github.navikt.tbd-libs:speed-client", version.ref = "tbdLibs" }
