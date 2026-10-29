@@ -1,7 +1,7 @@
 [versions]
 ktor = "3.6.0"
-tbdLibs = "20261013.1613"
-sykepengerGradlePlugins = "20261028.1441"
+tbdLibs = "20261029.1843"
+sykepengerGradlePlugins = "20261029.1945"
 
 [libraries]
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
@@ -25,7 +25,7 @@ wiremock = "org.wiremock:wiremock-jetty12:3.13.2"
 
 rapidsAndRivers = "com.github.navikt:rapids-and-rivers:2026091610031789545782"
 
-sykepengerLibs-logging = "no.nav.sykepenger.libs:logging:20261013.1719"
+sykepengerLibs-logging = "no.nav.sykepenger.libs:logging:20261029.1851"
 
 tbdLibs-azureTokenClientDefault = { module = "com.github.navikt.tbd-libs:azure-token-client-default", version.ref = "tbdLibs" }
 tbdLibs-speedClient = { module = "com.github.navikt.tbd-libs:speed-client", version.ref = "tbdLibs" }
